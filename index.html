@@ -1,765 +1,1476 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#080b11">
+<title>CALCX — Scientific Calculator</title>
 
-    <meta
-        name="description"
-        content="CALCX - Modern student scientific calculator"
-    >
+<style>
+:root{
+    --bg:#070a0f;
+    --panel:#0d121a;
+    --panel2:#121923;
+    --panel3:#171f2b;
+    --border:#252e3b;
+    --border2:#303b4d;
+    --text:#f5f7fb;
+    --muted:#8994a5;
+    --accent:#786cff;
+    --accent2:#5c50db;
+    --danger:#ff6262;
+    --success:#4fd49a;
+    --warning:#e5b85c;
+    --shadow:0 25px 70px rgba(0,0,0,.32);
+}
 
-    <title>CALCX — Scientific Calculator</title>
+*{
+    box-sizing:border-box;
+}
 
-    <link rel="stylesheet" href="style.css">
+html,body{
+    margin:0;
+    min-height:100%;
+    background:
+        radial-gradient(circle at 50% -10%,rgba(120,108,255,.08),transparent 35%),
+        var(--bg);
+    color:var(--text);
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+button,
+input,
+select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:2px;
+}
+
+.app{
+    width:min(760px,100%);
+    margin:auto;
+    padding:18px 14px 45px;
+}
+
+/* HEADER */
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:13px;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:11px;
+}
+
+.logo{
+    width:40px;
+    height:40px;
+    display:grid;
+    place-items:center;
+    border-radius:12px;
+    background:linear-gradient(135deg,var(--accent),#4e43c8);
+    font-size:20px;
+    font-weight:900;
+    box-shadow:0 8px 25px rgba(120,108,255,.22);
+}
+
+.brand-name{
+    font-size:14px;
+    font-weight:850;
+    letter-spacing:.13em;
+}
+
+.brand-sub{
+    color:var(--muted);
+    font-size:9px;
+    margin-top:2px;
+}
+
+.header-actions{
+    display:flex;
+    gap:6px;
+}
+
+.icon-btn{
+    width:37px;
+    height:37px;
+    border:1px solid var(--border);
+    background:var(--panel);
+    border-radius:10px;
+    color:var(--muted);
+}
+
+.icon-btn:hover{
+    background:var(--panel2);
+    color:#fff;
+}
+
+/* NAV */
+
+.nav{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:4px;
+    padding:4px;
+    border:1px solid var(--border);
+    background:rgba(13,18,26,.95);
+    border-radius:14px;
+    margin-bottom:10px;
+}
+
+.nav button{
+    border:0;
+    background:transparent;
+    color:var(--muted);
+    border-radius:10px;
+    padding:9px 3px;
+    font-size:10px;
+}
+
+.nav button.active{
+    background:rgba(120,108,255,.14);
+    color:#fff;
+}
+
+.nav-icon{
+    display:block;
+    color:var(--accent);
+    font-size:14px;
+    margin-bottom:2px;
+}
+
+/* DISPLAY */
+
+.display{
+    min-height:166px;
+    padding:17px 19px;
+    border:1px solid var(--border);
+    border-radius:18px;
+    background:
+        linear-gradient(145deg,#111722,#090d13);
+    box-shadow:var(--shadow);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
+
+.status{
+    display:flex;
+    gap:12px;
+    color:#687486;
+    font-size:9px;
+    font-weight:750;
+}
+
+.status .active-status{
+    color:var(--accent);
+}
+
+.expression{
+    text-align:right;
+    min-height:28px;
+    margin-top:8px;
+    color:#8f99a8;
+    font-size:18px;
+    word-break:break-all;
+}
+
+.answer{
+    text-align:right;
+    font-size:38px;
+    line-height:1.1;
+    font-weight:600;
+    letter-spacing:-.035em;
+    word-break:break-all;
+}
+
+.answer.error{
+    color:var(--danger);
+}
+
+/* SCIENTIFIC */
+
+.science{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:6px;
+    margin:9px 0;
+}
+
+.science button{
+    min-height:49px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:var(--panel);
+    color:#fff;
+}
+
+.science button:hover{
+    background:var(--panel2);
+}
+
+.science strong{
+    display:block;
+    font-size:13px;
+}
+
+.science small{
+    display:block;
+    color:var(--muted);
+    font-size:8px;
+    margin-top:2px;
+}
+
+.angles{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    margin:8px 0;
+    color:var(--muted);
+    font-size:9px;
+}
+
+.angles button{
+    padding:5px 8px;
+    border:1px solid var(--border);
+    border-radius:7px;
+    background:var(--panel);
+    color:var(--muted);
+    font-size:8px;
+    font-weight:750;
+}
+
+.angles button.active{
+    color:var(--accent);
+    background:rgba(120,108,255,.12);
+    border-color:#3a3263;
+}
+
+/* KEYPAD */
+
+.keypad{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:6px;
+}
+
+.key{
+    min-height:54px;
+    border:1px solid var(--border);
+    border-radius:11px;
+    background:var(--panel);
+    color:#fff;
+    font-size:16px;
+    transition:.08s;
+}
+
+.key:hover{
+    background:var(--panel2);
+    border-color:var(--border2);
+}
+
+.key:active{
+    transform:scale(.96);
+}
+
+.key.num{
+    background:#111720;
+    font-weight:650;
+}
+
+.key.memory{
+    color:#9d94ff;
+    font-size:9px;
+}
+
+.key.special{
+    color:#bcc5d2;
+    background:#161d27;
+}
+
+.key.operator{
+    background:#1d2634;
+    font-size:19px;
+}
+
+.key.clear{
+    color:var(--danger);
+    background:rgba(255,98,98,.07);
+}
+
+.key.equals{
+    background:var(--accent);
+    border-color:var(--accent);
+    font-size:21px;
+    font-weight:800;
+}
+
+.key.equals:hover{
+    background:var(--accent2);
+}
+
+.zero{
+    grid-column:span 2;
+}
+
+.hint{
+    text-align:center;
+    color:#505b6c;
+    font-size:8px;
+    margin-top:10px;
+}
+
+/* WORKSPACES */
+
+.workspace{
+    animation:appear .16s ease;
+}
+
+@keyframes appear{
+    from{
+        opacity:0;
+        transform:translateY(4px);
+    }
+    to{
+        opacity:1;
+        transform:none;
+    }
+}
+
+.workspace-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin:5px 0 15px;
+}
+
+.workspace-title h2{
+    margin:0;
+    font-size:21px;
+    letter-spacing:-.025em;
+}
+
+.workspace-title p{
+    color:var(--muted);
+    font-size:10px;
+    margin:4px 0 0;
+}
+
+.card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:13px;
+    margin-bottom:9px;
+}
+
+.card h3{
+    margin:0 0 10px;
+    font-size:12px;
+}
+
+.row{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    flex-wrap:wrap;
+}
+
+.grid2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+}
+
+.input,
+.select{
+    width:100%;
+    min-width:0;
+    background:#090d13;
+    color:#fff;
+    border:1px solid #293443;
+    border-radius:8px;
+    padding:9px 10px;
+    outline:none;
+}
+
+.input:focus,
+.select:focus{
+    border-color:var(--accent);
+}
+
+.btn{
+    border:1px solid var(--border);
+    background:var(--panel2);
+    color:#fff;
+    border-radius:9px;
+    padding:9px 12px;
+    font-size:10px;
+}
+
+.btn:hover{
+    background:var(--panel3);
+}
+
+.btn.primary{
+    background:var(--accent);
+    border-color:var(--accent);
+}
+
+.btn.danger{
+    color:var(--danger);
+}
+
+.result{
+    background:#090d13;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px;
+    font-family:
+        "SFMono-Regular",
+        Consolas,
+        monospace;
+    font-size:12px;
+    line-height:1.8;
+    white-space:pre-wrap;
+    overflow:auto;
+}
+
+.success{
+    color:var(--success);
+}
+
+.warning{
+    color:var(--warning);
+}
+
+.back-btn{
+    border:1px solid var(--border);
+    background:var(--panel);
+    color:var(--muted);
+    border-radius:9px;
+    padding:8px 11px;
+    font-size:10px;
+}
+
+/* TOOLS */
+
+.tools{
+    display:grid;
+    gap:7px;
+}
+
+.tool{
+    width:100%;
+    display:grid;
+    grid-template-columns:43px 1fr 18px;
+    align-items:center;
+    gap:10px;
+    text-align:left;
+    padding:11px;
+    border:1px solid var(--border);
+    border-radius:13px;
+    background:var(--panel);
+    color:#fff;
+}
+
+.tool:hover{
+    background:var(--panel2);
+    border-color:var(--border2);
+}
+
+.tool-icon{
+    width:38px;
+    height:38px;
+    border-radius:10px;
+    display:grid;
+    place-items:center;
+    background:rgba(120,108,255,.12);
+    color:var(--accent);
+    font-weight:850;
+}
+
+.tool strong{
+    display:block;
+    font-size:12px;
+}
+
+.tool small{
+    display:block;
+    color:var(--muted);
+    font-size:9px;
+    margin-top:2px;
+}
+
+.tool b{
+    color:var(--muted);
+}
+
+/* MATRIX */
+
+.matrix-pair{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+}
+
+.matrix-grid{
+    display:grid;
+    gap:5px;
+}
+
+.matrix-cell{
+    width:100%;
+    height:43px;
+    text-align:center;
+    background:#090d13;
+    color:#fff;
+    border:1px solid #293443;
+    border-radius:8px;
+    outline:none;
+}
+
+.matrix-cell:focus{
+    border-color:var(--accent);
+    background:#101522;
+}
+
+.matrix-ops{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:6px;
+}
+
+.matrix-ops button{
+    border:1px solid var(--border);
+    background:var(--panel2);
+    color:#fff;
+    border-radius:9px;
+    padding:10px 4px;
+    font-size:9px;
+}
+
+.matrix-ops button:hover{
+    background:var(--panel3);
+}
+
+/* EQUATION */
+
+.type-switch{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+}
+
+.type-switch button{
+    border:1px solid var(--border);
+    background:var(--panel2);
+    color:var(--muted);
+    border-radius:9px;
+    padding:10px;
+    font-size:10px;
+}
+
+.type-switch button.active{
+    color:#fff;
+    border-color:var(--accent);
+    background:rgba(120,108,255,.13);
+}
+
+/* HELP */
+
+.side{
+    position:fixed;
+    inset:0 0 0 auto;
+    width:min(420px,100%);
+    height:100%;
+    z-index:100;
+    background:#0a0f16;
+    border-left:1px solid var(--border);
+    box-shadow:-30px 0 80px rgba(0,0,0,.45);
+    transform:translateX(105%);
+    transition:.23s ease;
+    display:flex;
+    flex-direction:column;
+}
+
+.side.open{
+    transform:none;
+}
+
+.side-header{
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    padding:21px;
+    border-bottom:1px solid var(--border);
+}
+
+.eyebrow{
+    color:var(--accent);
+    font-size:8px;
+    font-weight:850;
+    letter-spacing:.12em;
+}
+
+.side-header h2{
+    margin:4px 0 0;
+    font-size:20px;
+}
+
+.side-header p{
+    margin:4px 0 0;
+    color:var(--muted);
+    font-size:10px;
+}
+
+.close{
+    width:35px;
+    height:35px;
+    border:1px solid var(--border);
+    background:var(--panel);
+    border-radius:9px;
+    color:var(--muted);
+    font-size:20px;
+}
+
+.search{
+    margin:13px 20px;
+    padding:9px 11px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:9px;
+}
+
+.search input{
+    width:100%;
+    background:transparent;
+    border:0;
+    outline:0;
+    color:#fff;
+    font-size:11px;
+}
+
+.help-content,
+.history-content{
+    overflow:auto;
+    padding:0 20px 35px;
+}
+
+.guide{
+    display:grid;
+    grid-template-columns:32px 1fr;
+    gap:9px;
+    padding:15px 0;
+    border-bottom:1px solid var(--border);
+}
+
+.guide-no{
+    color:var(--accent);
+    font:700 10px monospace;
+}
+
+.guide h3{
+    margin:0 0 5px;
+    font-size:13px;
+}
+
+.guide p,
+.guide li{
+    color:var(--muted);
+    font-size:10px;
+    line-height:1.7;
+}
+
+.example{
+    margin-top:8px;
+    padding:8px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:var(--panel);
+    color:#dce1e8;
+    font:10px monospace;
+}
+
+.history-item{
+    padding:13px 2px;
+    border-bottom:1px solid var(--border);
+    cursor:pointer;
+}
+
+.history-item:hover{
+    background:var(--panel);
+}
+
+.history-expression{
+    color:var(--muted);
+    font-size:10px;
+    word-break:break-all;
+}
+
+.history-answer{
+    margin-top:4px;
+    font-size:16px;
+    font-weight:650;
+}
+
+/* UTILITIES */
+
+.hidden{
+    display:none!important;
+}
+
+.spacer{
+    height:4px;
+}
+
+.small-note{
+    color:var(--muted);
+    font-size:9px;
+    line-height:1.6;
+}
+
+@media(max-width:540px){
+
+    .app{
+        padding:12px 8px 35px;
+    }
+
+    .display{
+        min-height:150px;
+    }
+
+    .answer{
+        font-size:32px;
+    }
+
+    .key{
+        min-height:49px;
+    }
+
+    .matrix-pair{
+        grid-template-columns:1fr;
+    }
+
+    .matrix-ops{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:350px){
+
+    .nav button{
+        font-size:8px;
+    }
+
+    .key{
+        min-height:46px;
+        font-size:14px;
+    }
+}
+</style>
 </head>
 
 <body>
 
 <div class="app">
 
-    <!-- ================= HEADER ================= -->
+<header class="header">
 
-    <header class="header">
+    <div class="brand">
+        <div class="logo">∑</div>
 
-        <div class="logo-area">
-
-            <div class="logo">
-                ∑
+        <div>
+            <div class="brand-name">CALCX</div>
+            <div class="brand-sub">
+                Student Scientific Calculator
             </div>
+        </div>
+    </div>
 
-            <div>
-                <div class="logo-name">CALCX</div>
-                <div class="logo-subtitle">
-                    Scientific Calculator
-                </div>
-            </div>
+    <div class="header-actions">
+        <button
+            class="icon-btn"
+            id="historyButton"
+            title="History"
+        >↶</button>
+
+        <button
+            class="icon-btn"
+            id="helpButton"
+            title="Help"
+        >?</button>
+    </div>
+
+</header>
+
+
+<nav class="nav">
+
+    <button
+        class="active"
+        data-main-view="basic"
+    >
+        <span class="nav-icon">⌨</span>
+        Basic
+    </button>
+
+    <button
+        data-main-view="scientific"
+    >
+        <span class="nav-icon">π</span>
+        Scientific
+    </button>
+
+    <button
+        data-main-view="matrix"
+    >
+        <span class="nav-icon">▦</span>
+        Matrix
+    </button>
+
+    <button
+        data-main-view="tools"
+    >
+        <span class="nav-icon">⚙</span>
+        Tools
+    </button>
+
+</nav>
+
+
+<!-- =====================================================
+     CALCULATOR
+===================================================== -->
+
+<section id="calculatorSection">
+
+    <div class="display">
+
+        <div class="status">
+
+            <span
+                id="angleStatus"
+                class="active-status"
+            >
+                DEG
+            </span>
+
+            <span id="memoryStatus"></span>
+
+            <span>Ans</span>
+
+        </div>
+
+        <div
+            class="expression"
+            id="expression"
+        >
+            0
+        </div>
+
+        <div
+            class="answer"
+            id="answer"
+        >
+            0
+        </div>
+
+    </div>
+
+
+    <div
+        class="science hidden"
+        id="sciencePanel"
+    >
+
+        <button data-calc-value="sin(">
+            <strong>sin</strong>
+            <small>Sine</small>
+        </button>
+
+        <button data-calc-value="cos(">
+            <strong>cos</strong>
+            <small>Cosine</small>
+        </button>
+
+        <button data-calc-value="tan(">
+            <strong>tan</strong>
+            <small>Tangent</small>
+        </button>
+
+        <button data-calc-value="asin(">
+            <strong>sin⁻¹</strong>
+            <small>Inverse</small>
+        </button>
+
+        <button data-calc-value="acos(">
+            <strong>cos⁻¹</strong>
+            <small>Inverse</small>
+        </button>
+
+        <button data-calc-value="atan(">
+            <strong>tan⁻¹</strong>
+            <small>Inverse</small>
+        </button>
+
+        <button data-calc-value="log(">
+            <strong>log</strong>
+            <small>Base 10</small>
+        </button>
+
+        <button data-calc-value="ln(">
+            <strong>ln</strong>
+            <small>Natural</small>
+        </button>
+
+        <button data-calc-value="sqrt(">
+            <strong>√</strong>
+            <small>Square root</small>
+        </button>
+
+        <button data-calc-value="abs(">
+            <strong>abs</strong>
+            <small>Absolute</small>
+        </button>
+
+        <button data-calc-value="^">
+            <strong>xʸ</strong>
+            <small>Power</small>
+        </button>
+
+        <button data-calc-value="^2">
+            <strong>x²</strong>
+            <small>Square</small>
+        </button>
+
+    </div>
+
+
+    <div
+        class="angles hidden"
+        id="anglePanel"
+    >
+
+        <span>Angle</span>
+
+        <button
+            class="active"
+            data-angle="DEG"
+        >
+            DEG
+        </button>
+
+        <button data-angle="RAD">
+            RAD
+        </button>
+
+        <button data-angle="GRAD">
+            GRAD
+        </button>
+
+    </div>
+
+
+    <div class="keypad">
+
+        <button class="key memory" data-action="mc">
+            MC
+        </button>
+
+        <button class="key memory" data-action="mr">
+            MR
+        </button>
+
+        <button class="key memory" data-action="mplus">
+            M+
+        </button>
+
+        <button class="key memory" data-action="mminus">
+            M−
+        </button>
+
+        <button class="key clear" data-action="clear">
+            AC
+        </button>
+
+
+        <button class="key special" data-calc-value="(">
+            (
+        </button>
+
+        <button class="key special" data-calc-value=")">
+            )
+        </button>
+
+        <button class="key special" data-calc-value="%">
+            %
+        </button>
+
+        <button class="key special" data-calc-value="!">
+            x!
+        </button>
+
+        <button class="key special" data-action="back">
+            ⌫
+        </button>
+
+
+        <button class="key num" data-calc-value="7">
+            7
+        </button>
+
+        <button class="key num" data-calc-value="8">
+            8
+        </button>
+
+        <button class="key num" data-calc-value="9">
+            9
+        </button>
+
+        <button class="key operator" data-calc-value="÷">
+            ÷
+        </button>
+
+        <button class="key special" data-calc-value="sqrt(">
+            √
+        </button>
+
+
+        <button class="key num" data-calc-value="4">
+            4
+        </button>
+
+        <button class="key num" data-calc-value="5">
+            5
+        </button>
+
+        <button class="key num" data-calc-value="6">
+            6
+        </button>
+
+        <button class="key operator" data-calc-value="×">
+            ×
+        </button>
+
+        <button class="key special" data-calc-value="^2">
+            x²
+        </button>
+
+
+        <button class="key num" data-calc-value="1">
+            1
+        </button>
+
+        <button class="key num" data-calc-value="2">
+            2
+        </button>
+
+        <button class="key num" data-calc-value="3">
+            3
+        </button>
+
+        <button class="key operator" data-calc-value="−">
+            −
+        </button>
+
+        <button class="key special" data-calc-value="π">
+            π
+        </button>
+
+
+        <button
+            class="key num zero"
+            data-calc-value="0"
+        >
+            0
+        </button>
+
+        <button class="key num" data-calc-value=".">
+            .
+        </button>
+
+        <button class="key special" data-action="ans">
+            Ans
+        </button>
+
+        <button class="key operator" data-calc-value="+">
+            +
+        </button>
+
+        <button
+            class="key equals"
+            data-action="calculate"
+        >
+            =
+        </button>
+
+    </div>
+
+
+    <div class="hint">
+        Enter = calculate • Escape = clear • Backspace = delete
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     MATRIX
+===================================================== -->
+
+<section
+    id="matrixSection"
+    class="workspace hidden"
+>
+
+    <div class="workspace-title">
+
+        <div>
+            <h2>Matrix Calculator</h2>
+
+            <p>
+                Enter values directly into the matrix.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="row">
+
+            <span class="small-note">
+                Matrix size
+            </span>
+
+            <select
+                class="select"
+                id="matrixSize"
+                style="width:auto"
+            >
+                <option value="2">
+                    2 × 2
+                </option>
+
+                <option value="3">
+                    3 × 3
+                </option>
+            </select>
+
+            <button
+                class="btn"
+                id="swapMatrices"
+            >
+                Swap A ↔ B
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="matrix-pair">
+
+        <div class="card">
+
+            <h3>Matrix A</h3>
+
+            <div
+                class="matrix-grid"
+                id="matrixA"
+            ></div>
+
+            <div class="spacer"></div>
+
+            <button
+                class="btn danger"
+                data-clear-matrix="A"
+            >
+                Clear A
+            </button>
 
         </div>
 
 
-        <div class="header-actions">
+        <div class="card">
+
+            <h3>Matrix B</h3>
+
+            <div
+                class="matrix-grid"
+                id="matrixB"
+            ></div>
+
+            <div class="spacer"></div>
 
             <button
-                class="icon-button"
-                id="historyBtn"
-                title="Calculation history"
+                class="btn danger"
+                data-clear-matrix="B"
             >
-                ↶
-            </button>
-
-            <button
-                class="icon-button"
-                id="helpBtn"
-                title="Calculator guide"
-            >
-                ?
+                Clear B
             </button>
 
         </div>
 
-    </header>
+    </div>
 
 
-    <!-- ================= MAIN ================= -->
+    <div class="card">
 
-    <main class="main">
+        <h3>Operations</h3>
 
-        <section class="calculator">
+        <div class="matrix-ops">
 
-            <!-- Mode navigation -->
+            <button data-matrix-op="add">
+                A + B
+            </button>
 
-            <nav class="mode-navigation">
+            <button data-matrix-op="sub">
+                A − B
+            </button>
 
-                <button
-                    class="nav-mode active"
-                    data-mode="basic"
-                >
-                    <span class="nav-icon">⌨</span>
-                    <span>Basic</span>
-                </button>
+            <button data-matrix-op="mul">
+                A × B
+            </button>
 
-                <button
-                    class="nav-mode"
-                    data-mode="scientific"
-                >
-                    <span class="nav-icon">π</span>
-                    <span>Scientific</span>
-                </button>
+            <button data-matrix-op="detA">
+                det(A)
+            </button>
 
-                <button
-                    class="nav-mode"
-                    data-mode="matrix"
-                >
-                    <span class="nav-icon">▦</span>
-                    <span>Matrix</span>
-                </button>
+            <button data-matrix-op="detB">
+                det(B)
+            </button>
 
-                <button
-                    class="nav-mode"
-                    data-mode="tools"
-                >
-                    <span class="nav-icon">⚙</span>
-                    <span>Tools</span>
-                </button>
+            <button data-matrix-op="invA">
+                A⁻¹
+            </button>
 
-            </nav>
-
-
-            <!-- ================= CALCULATOR VIEW ================= -->
-
-            <section id="calculatorView">
-
-                <!-- Display -->
-
-                <div class="display">
-
-                    <div class="display-status">
-
-                        <span id="angleMode">
-                            DEG
-                        </span>
-
-                        <span id="memoryStatus"></span>
-
-                        <span id="ansStatus">
-                            Ans
-                        </span>
-
-                    </div>
-
-
-                    <div
-                        class="expression"
-                        id="expression"
-                    >
-                        0
-                    </div>
-
-
-                    <div
-                        class="answer"
-                        id="answer"
-                    >
-                        0
-                    </div>
-
-                </div>
-
-
-                <!-- Scientific functions -->
-
-                <div
-                    class="scientific-functions"
-                    id="scientificFunctions"
-                >
-
-                    <button
-                        class="science-key"
-                        data-value="sin("
-                    >
-                        <strong>sin</strong>
-                        <small>Sine</small>
-                    </button>
-
-                    <button
-                        class="science-key"
-                        data-value="cos("
-                    >
-                        <strong>cos</strong>
-                        <small>Cosine</small>
-                    </button>
-
-                    <button
-                        class="science-key"
-                        data-value="tan("
-                    >
-                        <strong>tan</strong>
-                        <small>Tangent</small>
-                    </button>
-
-                    <button
-                        class="science-key"
-                        data-value="asin("
-                    >
-                        <strong>sin⁻¹</strong>
-                        <small>Inverse</small>
-                    </button>
-
-                    <button
-                        class="science-key"
-                        data-value="log("
-                    >
-                        <strong>log</strong>
-                        <small>Base 10</small>
-                    </button>
-
-                    <button
-                        class="science-key"
-                        data-value="ln("
-                    >
-                        <strong>ln</strong>
-                        <small>Natural</small>
-                    </button>
-
-                    <button
-                        class="science-key"
-                        data-value="sqrt("
-                    >
-                        <strong>√</strong>
-                        <small>Root</small>
-                    </button>
-
-                    <button
-                        class="science-key"
-                        data-value="^"
-                    >
-                        <strong>xʸ</strong>
-                        <small>Power</small>
-                    </button>
-
-                </div>
-
-
-                <!-- Angle -->
-
-                <div
-                    class="angle-row"
-                    id="angleRow"
-                >
-
-                    <span>Angle</span>
-
-                    <button
-                        class="angle active"
-                        data-angle="DEG"
-                    >
-                        DEG
-                    </button>
-
-                    <button
-                        class="angle"
-                        data-angle="RAD"
-                    >
-                        RAD
-                    </button>
-
-                    <button
-                        class="angle"
-                        data-angle="GRAD"
-                    >
-                        GRAD
-                    </button>
-
-                </div>
-
-
-                <!-- Keypad -->
-
-                <div class="keypad">
-
-                    <button
-                        class="key memory"
-                        data-action="mc"
-                    >
-                        MC
-                    </button>
-
-                    <button
-                        class="key memory"
-                        data-action="mr"
-                    >
-                        MR
-                    </button>
-
-                    <button
-                        class="key memory"
-                        data-action="mplus"
-                    >
-                        M+
-                    </button>
-
-                    <button
-                        class="key memory"
-                        data-action="mminus"
-                    >
-                        M−
-                    </button>
-
-                    <button
-                        class="key clear"
-                        data-action="clear"
-                    >
-                        AC
-                    </button>
-
-
-                    <button
-                        class="key special"
-                        data-value="("
-                    >
-                        (
-                    </button>
-
-                    <button
-                        class="key special"
-                        data-value=")"
-                    >
-                        )
-                    </button>
-
-                    <button
-                        class="key special"
-                        data-value="%"
-                    >
-                        %
-                    </button>
-
-                    <button
-                        class="key special"
-                        data-value="!"
-                    >
-                        x!
-                    </button>
-
-                    <button
-                        class="key delete"
-                        data-action="backspace"
-                    >
-                        ⌫
-                    </button>
-
-
-                    <button
-                        class="key number"
-                        data-value="7"
-                    >
-                        7
-                    </button>
-
-                    <button
-                        class="key number"
-                        data-value="8"
-                    >
-                        8
-                    </button>
-
-                    <button
-                        class="key number"
-                        data-value="9"
-                    >
-                        9
-                    </button>
-
-                    <button
-                        class="key operator"
-                        data-value="÷"
-                    >
-                        ÷
-                    </button>
-
-                    <button
-                        class="key special"
-                        data-value="sqrt("
-                    >
-                        √
-                    </button>
-
-
-                    <button
-                        class="key number"
-                        data-value="4"
-                    >
-                        4
-                    </button>
-
-                    <button
-                        class="key number"
-                        data-value="5"
-                    >
-                        5
-                    </button>
-
-                    <button
-                        class="key number"
-                        data-value="6"
-                    >
-                        6
-                    </button>
-
-                    <button
-                        class="key operator"
-                        data-value="×"
-                    >
-                        ×
-                    </button>
-
-                    <button
-                        class="key special"
-                        data-value="^2"
-                    >
-                        x²
-                    </button>
-
-
-                    <button
-                        class="key number"
-                        data-value="1"
-                    >
-                        1
-                    </button>
-
-                    <button
-                        class="key number"
-                        data-value="2"
-                    >
-                        2
-                    </button>
-
-                    <button
-                        class="key number"
-                        data-value="3"
-                    >
-                        3
-                    </button>
-
-                    <button
-                        class="key operator"
-                        data-value="−"
-                    >
-                        −
-                    </button>
-
-                    <button
-                        class="key special"
-                        data-value="π"
-                    >
-                        π
-                    </button>
-
-
-                    <button
-                        class="key number zero"
-                        data-value="0"
-                    >
-                        0
-                    </button>
-
-                    <button
-                        class="key number"
-                        data-value="."
-                    >
-                        .
-                    </button>
-
-                    <button
-                        class="key special"
-                        data-action="ans"
-                    >
-                        Ans
-                    </button>
-
-                    <button
-                        class="key operator"
-                        data-value="+"
-                    >
-                        +
-                    </button>
-
-                    <button
-                        class="key equals"
-                        data-action="calculate"
-                    >
-                        =
-                    </button>
-
-                </div>
-
-
-                <div class="keyboard-hint">
-                    Enter = Calculate &nbsp; • &nbsp;
-                    Esc = Clear &nbsp; • &nbsp;
-                    Backspace = Delete
-                </div>
-
-            </section>
-
-
-            <!-- ================= MATRIX VIEW ================= -->
-
-            <section
-                class="matrix-view hidden"
-                id="matrixView"
-            >
-
-                <div class="workspace-header">
-
-                    <div>
-
-                        <h2>Matrix Calculator</h2>
-
-                        <p>
-                            Build and calculate matrices easily.
-                        </p>
-
-                    </div>
-
-                    <button
-                        class="help-mini"
-                        id="matrixHelp"
-                    >
-                        ?
-                    </button>
-
-                </div>
-
-
-                <div class="matrix-size-row">
-
-                    <label>
-                        Matrix size
-                    </label>
-
-                    <select id="matrixSize">
-
-                        <option value="2">2 × 2</option>
-                        <option value="3">3 × 3</option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="matrix-grid-wrapper">
-
-                    <div class="matrix-card">
-
-                        <div class="matrix-card-header">
-                            <span>Matrix A</span>
-
-                            <button
-                                class="clear-matrix"
-                                data-matrix="A"
-                            >
-                                Clear
-                            </button>
-                        </div>
-
-                        <div
-                            class="matrix-grid"
-                            id="matrixA"
-                        ></div>
-
-                    </div>
-
-
-                    <div class="matrix-card">
-
-                        <div class="matrix-card-header">
-                            <span>Matrix B</span>
-
-                            <button
-                                class="clear-matrix"
-                                data-matrix="B"
-                            >
-                                Clear
-                            </button>
-                        </div>
-
-                        <div
-                            class="matrix-grid"
-                            id="matrixB"
-                        ></div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="matrix-operations">
-
-                    <button data-matrix-op="add">
-                        A + B
-                    </button>
-
-                    <button data-matrix-op="subtract">
-                        A − B
-                    </button>
-
-                    <button data-matrix-op="multiply">
-                        A × B
-                    </button>
-
-                    <button data-matrix-op="detA">
-                        det(A)
-                    </button>
-
-                    <button data-matrix-op="detB">
-                        det(B)
-                    </button>
-
-                    <button data-matrix-op="inverseA">
-                        A⁻¹
-                    </button>
-
-                    <button data-matrix-op="inverseB">
-                        B⁻¹
-                    </button>
-
-                    <button data-matrix-op="transposeA">
-                        Aᵀ
-                    </button>
-
-                    <button data-matrix-op="transposeB">
-                        Bᵀ
-                    </button>
-
-                </div>
-
-
-                <div class="matrix-result-card">
-
-                    <div class="result-title">
-                        Result
-                    </div>
-
-                    <div
-                        id="matrixResult"
-                        class="matrix-result"
-                    >
-                        Choose an operation.
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- ================= TOOLS VIEW ================= -->
-
-            <section
-                class="tools-view hidden"
-                id="toolsView"
-            >
-
-                <div class="workspace-header">
-
-                    <div>
-                        <h2>Math Tools</h2>
-                        <p>
-                            Useful tools for school and engineering.
-                        </p>
-                    </div>
-
-                </div>
-
-
-                <div class="tools-grid">
-
-                    <button class="tool">
-                        <span>ƒ</span>
-                        <div>
-                            <strong>Equation Solver</strong>
-                            <small>
-                                Solve equations
-                            </small>
-                        </div>
-                        <b>›</b>
-                    </button>
-
-
-                    <button class="tool">
-                        <span>σ</span>
-                        <div>
-                            <strong>Statistics</strong>
-                            <small>
-                                Mean, variance & SD
-                            </small>
-                        </div>
-                        <b>›</b>
-                    </button>
-
-
-                    <button class="tool">
-                        <span>∫</span>
-                        <div>
-                            <strong>Calculus</strong>
-                            <small>
-                                Differentiation & integration
-                            </small>
-                        </div>
-                        <b>›</b>
-                    </button>
-
-
-                    <button class="tool">
-                        <span>⇄</span>
-                        <div>
-                            <strong>Conversions</strong>
-                            <small>
-                                Length, mass, angle & more
-                            </small>
-                        </div>
-                        <b>›</b>
-                    </button>
-
-
-                    <button class="tool">
-                        <span>₂</span>
-                        <div>
-                            <strong>Base-N</strong>
-                            <small>
-                                BIN, OCT, DEC & HEX
-                            </small>
-                        </div>
-                        <b>›</b>
-                    </button>
-
-
-                    <button class="tool">
-                        <span>n!</span>
-                        <div>
-                            <strong>Combinatorics</strong>
-                            <small>
-                                nCr & nPr
-                            </small>
-                        </div>
-                        <b>›</b>
-                    </button>
-
-                </div>
-
-            </section>
-
-        </section>
-
-    </main>
+            <button data-matrix-op="invB">
+                B⁻¹
+            </button>
+
+            <button data-matrix-op="trA">
+                Aᵀ
+            </button>
+
+            <button data-matrix-op="trB">
+                Bᵀ
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>Result</h3>
+
+        <div
+            class="result"
+            id="matrixResult"
+        >
+            Choose an operation.
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     TOOLS
+===================================================== -->
+
+<section
+    id="toolsSection"
+    class="workspace hidden"
+>
+
+    <div class="workspace-title">
+
+        <div>
+
+            <h2>Math Tools</h2>
+
+            <p>
+                Practical tools for school and engineering.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="tools">
+
+        <button
+            class="tool"
+            data-tool="equation"
+        >
+            <span class="tool-icon">ƒ</span>
+
+            <span>
+                <strong>Equation Solver</strong>
+                <small>
+                    Linear and quadratic equations
+                </small>
+            </span>
+
+            <b>›</b>
+        </button>
+
+
+        <button
+            class="tool"
+            data-tool="statistics"
+        >
+            <span class="tool-icon">σ</span>
+
+            <span>
+                <strong>Statistics</strong>
+                <small>
+                    Mean, median, variance and SD
+                </small>
+            </span>
+
+            <b>›</b>
+        </button>
+
+
+        <button
+            class="tool"
+            data-tool="calculus"
+        >
+            <span class="tool-icon">∫</span>
+
+            <span>
+                <strong>Calculus</strong>
+                <small>
+                    Derivative and definite integration
+                </small>
+            </span>
+
+            <b>›</b>
+        </button>
+
+
+        <button
+            class="tool"
+            data-tool="conversion"
+        >
+            <span class="tool-icon">⇄</span>
+
+            <span>
+                <strong>Conversions</strong>
+                <small>
+                    Length, area, mass, speed and more
+                </small>
+            </span>
+
+            <b>›</b>
+        </button>
+
+
+        <button
+            class="tool"
+            data-tool="base"
+        >
+            <span class="tool-icon">₂</span>
+
+            <span>
+                <strong>Base-N</strong>
+                <small>
+                    BIN, OCT, DEC and HEX
+                </small>
+            </span>
+
+            <b>›</b>
+        </button>
+
+
+        <button
+            class="tool"
+            data-tool="combinatorics"
+        >
+            <span class="tool-icon">n!</span>
+
+            <span>
+                <strong>Combinatorics</strong>
+                <small>
+                    Factorial, nPr and nCr
+                </small>
+            </span>
+
+            <b>›</b>
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     TOOL WORKSPACE
+===================================================== -->
+
+<section
+    id="toolWorkspace"
+    class="workspace hidden"
+></section>
+
 
 </div>
 
 
-<!-- ================= HELP ================= -->
+<!-- =====================================================
+     HELP PANEL
+===================================================== -->
 
 <aside
-    class="side-panel"
+    class="side"
     id="helpPanel"
 >
 
     <div class="side-header">
 
         <div>
-            <span class="eyebrow">
-                CALCX GUIDE
-            </span>
 
-            <h2>How to use it</h2>
+            <div class="eyebrow">
+                CALCX GUIDE
+            </div>
+
+            <h2>
+                How to use it
+            </h2>
 
             <p>
-                Everything you need to get started.
+                Beginner-friendly calculator guide.
             </p>
+
         </div>
 
         <button
@@ -772,39 +1483,38 @@
     </div>
 
 
-    <div class="help-search">
-
-        <span>⌕</span>
+    <div class="search">
 
         <input
             id="helpSearch"
-            type="search"
             placeholder="Search guide..."
         >
 
     </div>
 
 
-    <div class="help-body">
+    <div
+        class="help-content"
+        id="helpContent"
+    >
 
-        <article class="guide-card">
+        <article class="guide">
 
-            <div class="guide-number">
-                01
-            </div>
+            <b class="guide-no">01</b>
 
             <div>
 
-                <h3>Start with Basic mode</h3>
+                <h3>
+                    Basic calculations
+                </h3>
 
                 <p>
-                    For normal calculations, simply enter the
-                    numbers and operators and press
-                    <b>=</b>.
+                    Enter numbers and operators and press
+                    <b>=</b>. Brackets are supported.
                 </p>
 
-                <div class="guide-example">
-                    25 × 4 + 10 = <b>110</b>
+                <div class="example">
+                    25 × 4 + 10 = 110
                 </div>
 
             </div>
@@ -812,23 +1522,23 @@
         </article>
 
 
-        <article class="guide-card">
+        <article class="guide">
 
-            <div class="guide-number">
-                02
-            </div>
+            <b class="guide-no">02</b>
 
             <div>
 
-                <h3>Use Scientific mode</h3>
+                <h3>
+                    Scientific mode
+                </h3>
 
                 <p>
-                    Switch to Scientific when you need
-                    trigonometry, logarithms, powers or roots.
+                    Scientific mode adds trigonometry,
+                    logarithms, roots and powers.
                 </p>
 
-                <div class="guide-example">
-                    sin(30) = <b>0.5</b>
+                <div class="example">
+                    sin(30) = 0.5 in DEG
                 </div>
 
             </div>
@@ -836,23 +1546,43 @@
         </article>
 
 
-        <article class="guide-card">
+        <article class="guide">
 
-            <div class="guide-number">
-                03
-            </div>
+            <b class="guide-no">03</b>
 
             <div>
 
-                <h3>Choose the correct angle</h3>
+                <h3>
+                    DEG / RAD / GRAD
+                </h3>
 
                 <p>
-                    <b>DEG</b> is normally used for angles written
-                    with °. Use <b>RAD</b> for radians.
+                    Use DEG for degree angles, RAD for
+                    radians and GRAD for gradians.
                 </p>
 
-                <div class="guide-example">
-                    sin(30°) → DEG
+            </div>
+
+        </article>
+
+
+        <article class="guide">
+
+            <b class="guide-no">04</b>
+
+            <div>
+
+                <h3>
+                    Matrix calculator
+                </h3>
+
+                <p>
+                    Select 2×2 or 3×3, enter values into
+                    A and B, then choose an operation.
+                </p>
+
+                <div class="example">
+                    A × B • det(A) • A⁻¹ • Aᵀ
                 </div>
 
             </div>
@@ -860,23 +1590,23 @@
         </article>
 
 
-        <article class="guide-card">
+        <article class="guide">
 
-            <div class="guide-number">
-                04
-            </div>
+            <b class="guide-no">05</b>
 
             <div>
 
-                <h3>Working with matrices</h3>
+                <h3>
+                    Equation solver
+                </h3>
 
                 <p>
-                    Open Matrix mode, select 2×2 or 3×3,
-                    enter your values and select an operation.
+                    Linear equations use ax+b=0.
+                    Quadratic equations use ax²+bx+c=0.
                 </p>
 
-                <div class="guide-example">
-                    A × B → Matrix multiplication
+                <div class="example">
+                    2x² + 5x − 3 = 0
                 </div>
 
             </div>
@@ -884,21 +1614,70 @@
         </article>
 
 
-        <article class="guide-card">
+        <article class="guide">
 
-            <div class="guide-number">
-                05
-            </div>
+            <b class="guide-no">06</b>
 
             <div>
 
-                <h3>Memory</h3>
+                <h3>
+                    Statistics
+                </h3>
+
+                <p>
+                    Enter values separated by commas.
+                    The calculator gives descriptive statistics.
+                </p>
+
+                <div class="example">
+                    4, 7, 8, 10, 12
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <article class="guide">
+
+            <b class="guide-no">07</b>
+
+            <div>
+
+                <h3>
+                    Calculus
+                </h3>
+
+                <p>
+                    Enter functions using x. The derivative
+                    uses a central numerical difference and
+                    integration uses Simpson's rule.
+                </p>
+
+                <div class="example">
+                    x² + 3x → f′(2) = 7
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <article class="guide">
+
+            <b class="guide-no">08</b>
+
+            <div>
+
+                <h3>
+                    Memory
+                </h3>
 
                 <ul>
-                    <li><b>MC</b> — Clear memory</li>
-                    <li><b>MR</b> — Recall memory</li>
-                    <li><b>M+</b> — Add result</li>
-                    <li><b>M−</b> — Subtract result</li>
+                    <li>MC — clear memory</li>
+                    <li>MR — recall memory</li>
+                    <li>M+ — add answer</li>
+                    <li>M− — subtract answer</li>
                 </ul>
 
             </div>
@@ -906,20 +1685,19 @@
         </article>
 
 
-        <article class="guide-card">
+        <article class="guide">
 
-            <div class="guide-number">
-                06
-            </div>
+            <b class="guide-no">09</b>
 
             <div>
 
-                <h3>Need more help?</h3>
+                <h3>
+                    Keyboard
+                </h3>
 
                 <p>
-                    Search this guide for terms such as
-                    <b>matrix</b>, <b>sin</b>, <b>memory</b>,
-                    <b>factorial</b> or <b>radians</b>.
+                    Enter calculates, Escape clears,
+                    and Backspace deletes.
                 </p>
 
             </div>
@@ -931,25 +1709,31 @@
 </aside>
 
 
-<!-- ================= HISTORY ================= -->
+<!-- =====================================================
+     HISTORY PANEL
+===================================================== -->
 
 <aside
-    class="side-panel"
+    class="side"
     id="historyPanel"
 >
 
     <div class="side-header">
 
         <div>
-            <span class="eyebrow">
-                CALCULATIONS
-            </span>
 
-            <h2>History</h2>
+            <div class="eyebrow">
+                CALCULATIONS
+            </div>
+
+            <h2>
+                History
+            </h2>
 
             <p>
-                Your previous calculations.
+                Click a calculation to reuse it.
             </p>
+
         </div>
 
         <button
@@ -962,23 +1746,4077 @@
     </div>
 
 
-    <button
-        class="clear-history"
-        id="clearHistory"
-    >
-        Clear history
-    </button>
+    <div style="padding:13px 20px">
+
+        <button
+            class="btn danger"
+            id="clearHistory"
+        >
+            Clear history
+        </button>
+
+    </div>
 
 
     <div
-        class="history-list"
-        id="historyList"
+        class="history-content"
+        id="historyContent"
     ></div>
 
 </aside>
 
 
-<script src="app.js"></script>
+<script>
+"use strict";
+
+/* =========================================================
+   APPLICATION STATE
+========================================================= */
+
+const state = {
+
+    expression: "",
+
+    answer: "0",
+
+    numericAnswer: 0,
+
+    memory: 0,
+
+    angle: "DEG",
+
+    history: [],
+
+    matrixSize: 2
+
+};
+
+
+/* =========================================================
+   SHORTCUTS
+========================================================= */
+
+const $ = selector =>
+    document.querySelector(selector);
+
+const $$ = selector =>
+    [...document.querySelectorAll(selector)];
+
+
+/* =========================================================
+   BASIC HELPERS
+========================================================= */
+
+function formatNumber(value){
+
+    if(!Number.isFinite(value)){
+        throw new Error("Math error");
+    }
+
+    if(Math.abs(value) < 1e-12){
+        value = 0;
+    }
+
+    return Number(
+        value.toPrecision(12)
+    ).toString();
+}
+
+
+function degreesToRadians(value){
+
+    return value * Math.PI / 180;
+
+}
+
+
+function radiansToDegrees(value){
+
+    return value * 180 / Math.PI;
+
+}
+
+
+function toRadians(value){
+
+    if(state.angle === "DEG"){
+        return degreesToRadians(value);
+    }
+
+    if(state.angle === "GRAD"){
+        return value * Math.PI / 200;
+    }
+
+    return value;
+}
+
+
+function fromRadians(value){
+
+    if(state.angle === "DEG"){
+        return radiansToDegrees(value);
+    }
+
+    if(state.angle === "GRAD"){
+        return value * 200 / Math.PI;
+    }
+
+    return value;
+}
+
+
+/* =========================================================
+   FACTORIAL
+========================================================= */
+
+function factorial(n){
+
+    if(!Number.isFinite(n)){
+        throw new Error("Invalid factorial");
+    }
+
+    if(!Number.isInteger(n)){
+        throw new Error(
+            "Factorial requires a whole number"
+        );
+    }
+
+    if(n < 0){
+        throw new Error(
+            "Factorial requires n ≥ 0"
+        );
+    }
+
+    if(n > 170){
+        throw new Error(
+            "Number is too large for factorial"
+        );
+    }
+
+    let result = 1;
+
+    for(let i = 2; i <= n; i++){
+        result *= i;
+    }
+
+    return result;
+}
+
+
+/* =========================================================
+   TOKENIZER
+========================================================= */
+
+function tokenize(input){
+
+    const tokens = [];
+
+    let i = 0;
+
+    while(i < input.length){
+
+        const char = input[i];
+
+        if(/\s/.test(char)){
+            i++;
+            continue;
+        }
+
+
+        /* Number */
+
+        if(/[0-9.]/.test(char)){
+
+            let text = "";
+
+            while(
+                i < input.length &&
+                /[0-9.eE]/.test(input[i])
+            ){
+
+                text += input[i];
+                i++;
+
+            }
+
+            const number = Number(text);
+
+            if(!Number.isFinite(number)){
+                throw new Error(
+                    "Invalid number"
+                );
+            }
+
+            tokens.push({
+                type:"number",
+                value:number
+            });
+
+            continue;
+        }
+
+
+        /* Operators */
+
+        if("+-*/^%!,".includes(char)){
+
+            tokens.push({
+                type:"operator",
+                value:char
+            });
+
+            i++;
+
+            continue;
+        }
+
+
+        /* Parentheses */
+
+        if(char === "(" || char === ")"){
+
+            tokens.push({
+                type:"paren",
+                value:char
+            });
+
+            i++;
+
+            continue;
+        }
+
+
+        /* Pi */
+
+        if(char === "π"){
+
+            tokens.push({
+                type:"number",
+                value:Math.PI
+            });
+
+            i++;
+
+            continue;
+        }
+
+
+        /* Euler's number */
+
+        if(char === "e"){
+
+            tokens.push({
+                type:"number",
+                value:Math.E
+            });
+
+            i++;
+
+            continue;
+        }
+
+
+        /* Variable */
+
+        if(char === "x" || char === "X"){
+
+            tokens.push({
+                type:"variable",
+                value:"x"
+            });
+
+            i++;
+
+            continue;
+        }
+
+
+        /* Functions */
+
+        if(/[a-zA-Z]/.test(char)){
+
+            let name = "";
+
+            while(
+                i < input.length &&
+                /[a-zA-Z]/.test(input[i])
+            ){
+
+                name += input[i];
+                i++;
+
+            }
+
+            tokens.push({
+                type:"function",
+                value:name.toLowerCase()
+            });
+
+            continue;
+        }
+
+
+        throw new Error(
+            "Unknown character: " + char
+        );
+
+    }
+
+    return tokens;
+}
+
+
+/* =========================================================
+   EXPRESSION PARSER
+========================================================= */
+
+function evaluate(input, variableValue = 0){
+
+    const tokens = tokenize(input);
+
+    let position = 0;
+
+
+    function peek(){
+        return tokens[position];
+    }
+
+
+    function consume(){
+        return tokens[position++];
+    }
+
+
+    function parseExpression(){
+
+        let value = parseTerm();
+
+
+        while(
+            peek() &&
+            (
+                peek().value === "+" ||
+                peek().value === "-"
+            )
+        ){
+
+            const operator =
+                consume().value;
+
+            const right =
+                parseTerm();
+
+            if(operator === "+"){
+                value += right;
+            }else{
+                value -= right;
+            }
+
+        }
+
+        return value;
+    }
+
+
+    function parseTerm(){
+
+        let value = parsePower();
+
+
+        while(
+            peek() &&
+            (
+                peek().value === "*" ||
+                peek().value === "/"
+            )
+        ){
+
+            const operator =
+                consume().value;
+
+            const right =
+                parsePower();
+
+            if(
+                operator === "/" &&
+                Math.abs(right) < 1e-15
+            ){
+
+                throw new Error(
+                    "Cannot divide by zero"
+                );
+
+            }
+
+            if(operator === "*"){
+                value *= right;
+            }else{
+                value /= right;
+            }
+
+        }
+
+        return value;
+    }
+
+
+    function parsePower(){
+
+        let value = parseUnary();
+
+
+        if(
+            peek() &&
+            peek().value === "^"
+        ){
+
+            consume();
+
+            const exponent =
+                parsePower();
+
+            value =
+                Math.pow(
+                    value,
+                    exponent
+                );
+
+        }
+
+        return value;
+    }
+
+
+    function parseUnary(){
+
+        if(
+            peek() &&
+            peek().value === "+"
+        ){
+
+            consume();
+
+            return parseUnary();
+
+        }
+
+
+        if(
+            peek() &&
+            peek().value === "-"
+        ){
+
+            consume();
+
+            return -parseUnary();
+
+        }
+
+
+        return parsePostfix();
+
+    }
+
+
+    function parsePostfix(){
+
+        let value = parsePrimary();
+
+
+        while(
+            peek() &&
+            (
+                peek().value === "!" ||
+                peek().value === "%"
+            )
+        ){
+
+            const operator =
+                consume().value;
+
+            if(operator === "!"){
+                value = factorial(value);
+            }else{
+                value /= 100;
+            }
+
+        }
+
+        return value;
+    }
+
+
+    function parsePrimary(){
+
+        const token = peek();
+
+
+        if(!token){
+            throw new Error(
+                "Incomplete expression"
+            );
+        }
+
+
+        if(token.type === "number"){
+
+            consume();
+
+            return token.value;
+        }
+
+
+        if(token.type === "variable"){
+
+            consume();
+
+            return variableValue;
+        }
+
+
+        if(
+            token.type === "paren" &&
+            token.value === "("
+        ){
+
+            consume();
+
+            const value =
+                parseExpression();
+
+            if(
+                !peek() ||
+                peek().value !== ")"
+            ){
+
+                throw new Error(
+                    "Missing )"
+                );
+
+            }
+
+            consume();
+
+            return value;
+        }
+
+
+        if(token.type === "function"){
+
+            const name =
+                consume().value;
+
+
+            if(
+                !peek() ||
+                peek().value !== "("
+            ){
+
+                throw new Error(
+                    name + " requires ("
+                );
+
+            }
+
+            consume();
+
+
+            const value =
+                parseExpression();
+
+
+            if(
+                !peek() ||
+                peek().value !== ")"
+            ){
+
+                throw new Error(
+                    "Missing )"
+                );
+
+            }
+
+            consume();
+
+
+            return applyFunction(
+                name,
+                value
+            );
+
+        }
+
+
+        throw new Error(
+            "Unexpected input"
+        );
+    }
+
+
+    const result =
+        parseExpression();
+
+
+    if(position !== tokens.length){
+
+        throw new Error(
+            "Invalid expression"
+        );
+
+    }
+
+
+    if(!Number.isFinite(result)){
+
+        throw new Error(
+            "Result is not a real number"
+        );
+
+    }
+
+
+    return result;
+}
+
+
+/* =========================================================
+   SCIENTIFIC FUNCTIONS
+========================================================= */
+
+function applyFunction(name, x){
+
+    switch(name){
+
+        case "sin":
+            return Math.sin(
+                toRadians(x)
+            );
+
+        case "cos":
+            return Math.cos(
+                toRadians(x)
+            );
+
+        case "tan":
+
+            if(
+                Math.abs(
+                    Math.cos(
+                        toRadians(x)
+                    )
+                ) < 1e-12
+            ){
+
+                throw new Error(
+                    "tan is undefined"
+                );
+
+            }
+
+            return Math.tan(
+                toRadians(x)
+            );
+
+        case "asin":
+
+            if(x < -1 || x > 1){
+                throw new Error(
+                    "asin domain: −1 ≤ x ≤ 1"
+                );
+            }
+
+            return fromRadians(
+                Math.asin(x)
+            );
+
+        case "acos":
+
+            if(x < -1 || x > 1){
+                throw new Error(
+                    "acos domain: −1 ≤ x ≤ 1"
+                );
+            }
+
+            return fromRadians(
+                Math.acos(x)
+            );
+
+        case "atan":
+
+            return fromRadians(
+                Math.atan(x)
+            );
+
+        case "sqrt":
+
+            if(x < 0){
+                throw new Error(
+                    "√ requires x ≥ 0"
+                );
+            }
+
+            return Math.sqrt(x);
+
+        case "log":
+
+            if(x <= 0){
+                throw new Error(
+                    "log requires x > 0"
+                );
+            }
+
+            return Math.log10(x);
+
+        case "ln":
+
+            if(x <= 0){
+                throw new Error(
+                    "ln requires x > 0"
+                );
+            }
+
+            return Math.log(x);
+
+        case "abs":
+
+            return Math.abs(x);
+
+        default:
+
+            throw new Error(
+                "Unknown function: " + name
+            );
+    }
+}
+
+
+/* =========================================================
+   DISPLAY
+========================================================= */
+
+function updateDisplay(){
+
+    $("#expression").textContent =
+        state.expression || "0";
+
+    $("#answer").textContent =
+        state.answer;
+
+    $("#angleStatus").textContent =
+        state.angle;
+
+    $("#memoryStatus").textContent =
+        state.memory !== 0
+            ? "M " + formatNumber(state.memory)
+            : "";
+
+}
+
+
+function setAnswer(value){
+
+    state.answer =
+        formatNumber(value);
+
+    state.numericAnswer =
+        value;
+
+    $("#answer").classList.remove(
+        "error"
+    );
+
+    updateDisplay();
+
+}
+
+
+/* =========================================================
+   BASIC CALCULATOR
+========================================================= */
+
+function addToExpression(value){
+
+    state.expression += value;
+
+    updateDisplay();
+
+}
+
+
+function clearCalculator(){
+
+    state.expression = "";
+
+    state.answer = "0";
+
+    state.numericAnswer = 0;
+
+    updateDisplay();
+
+}
+
+
+function backspace(){
+
+    state.expression =
+        state.expression.slice(
+            0,
+            -1
+        );
+
+    updateDisplay();
+
+}
+
+
+function calculate(){
+
+    if(!state.expression){
+        return;
+    }
+
+
+    try{
+
+        const value =
+            evaluate(
+                state.expression
+            );
+
+        const formatted =
+            formatNumber(value);
+
+
+        state.answer =
+            formatted;
+
+        state.numericAnswer =
+            value;
+
+
+        state.history.unshift({
+
+            expression:
+                state.expression,
+
+            answer:
+                formatted,
+
+            timestamp:
+                Date.now()
+
+        });
+
+
+        if(
+            state.history.length > 100
+        ){
+
+            state.history.pop();
+
+        }
+
+
+        renderHistory();
+
+        $("#answer")
+            .classList.remove("error");
+
+        updateDisplay();
+
+    }catch(error){
+
+        state.answer =
+            "Error";
+
+        $("#answer")
+            .classList.add("error");
+
+        updateDisplay();
+
+
+        setTimeout(()=>{
+
+            $("#answer")
+                .classList.remove("error");
+
+            state.answer = "0";
+
+            updateDisplay();
+
+        },1500);
+
+    }
+
+}
+
+
+/* =========================================================
+   MEMORY
+========================================================= */
+
+function memory(action){
+
+    switch(action){
+
+        case "mc":
+
+            state.memory = 0;
+
+            break;
+
+
+        case "mr":
+
+            addToExpression(
+                String(state.memory)
+            );
+
+            break;
+
+
+        case "mplus":
+
+            state.memory +=
+                state.numericAnswer;
+
+            break;
+
+
+        case "mminus":
+
+            state.memory -=
+                state.numericAnswer;
+
+            break;
+
+    }
+
+
+    updateDisplay();
+
+}
+
+
+/* =========================================================
+   MAIN NAVIGATION
+========================================================= */
+
+$$("[data-main-view]")
+.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        ()=>{
+
+            const view =
+                button.dataset.mainView;
+
+
+            $$("[data-main-view]")
+            .forEach(
+                b =>
+                    b.classList.toggle(
+                        "active",
+                        b === button
+                    )
+            );
+
+
+            $("#calculatorSection")
+                .classList.toggle(
+                    "hidden",
+                    view === "matrix" ||
+                    view === "tools"
+                );
+
+
+            $("#matrixSection")
+                .classList.toggle(
+                    "hidden",
+                    view !== "matrix"
+                );
+
+
+            $("#toolsSection")
+                .classList.toggle(
+                    "hidden",
+                    view !== "tools"
+                );
+
+
+            $("#toolWorkspace")
+                .classList.add(
+                    "hidden"
+                );
+
+
+            $("#sciencePanel")
+                .classList.toggle(
+                    "hidden",
+                    view !== "scientific"
+                );
+
+
+            $("#anglePanel")
+                .classList.toggle(
+                    "hidden",
+                    view !== "scientific"
+                );
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   CALCULATOR BUTTONS
+========================================================= */
+
+$$("[data-calc-value]")
+.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        ()=>{
+
+            addToExpression(
+                button.dataset.calcValue
+            );
+
+        }
+    );
+
+});
+
+
+$$("[data-action]")
+.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        ()=>{
+
+            const action =
+                button.dataset.action;
+
+
+            if(action === "calculate"){
+                calculate();
+                return;
+            }
+
+
+            if(action === "clear"){
+                clearCalculator();
+                return;
+            }
+
+
+            if(action === "back"){
+                backspace();
+                return;
+            }
+
+
+            if(action === "ans"){
+
+                addToExpression(
+                    String(
+                        state.numericAnswer
+                    )
+                );
+
+                return;
+            }
+
+
+            if(
+                [
+                    "mc",
+                    "mr",
+                    "mplus",
+                    "mminus"
+                ].includes(action)
+            ){
+
+                memory(action);
+
+            }
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   ANGLE MODE
+========================================================= */
+
+$$("[data-angle]")
+.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        ()=>{
+
+            state.angle =
+                button.dataset.angle;
+
+
+            $$("[data-angle]")
+            .forEach(
+                b =>
+                    b.classList.toggle(
+                        "active",
+                        b === button
+                    )
+            );
+
+
+            updateDisplay();
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        const active =
+            document.activeElement;
+
+
+        if(
+            active &&
+            (
+                active.tagName === "INPUT" ||
+                active.tagName === "SELECT"
+            )
+        ){
+
+            return;
+
+        }
+
+
+        const key =
+            event.key;
+
+
+        if(
+            key >= "0" &&
+            key <= "9"
+        ){
+
+            addToExpression(key);
+
+            return;
+
+        }
+
+
+        if(
+            ["+","-","*","/","(",")","."].includes(key)
+        ){
+
+            event.preventDefault();
+
+            const converted =
+                key === "*"
+                    ? "×"
+                    : key === "/"
+                        ? "÷"
+                        : key;
+
+            addToExpression(converted);
+
+            return;
+
+        }
+
+
+        if(
+            key === "Enter" ||
+            key === "="
+        ){
+
+            event.preventDefault();
+
+            calculate();
+
+            return;
+
+        }
+
+
+        if(key === "Backspace"){
+
+            backspace();
+
+            return;
+
+        }
+
+
+        if(key === "Escape"){
+
+            clearCalculator();
+
+            return;
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+function renderHistory(){
+
+    const container =
+        $("#historyContent");
+
+
+    if(
+        state.history.length === 0
+    ){
+
+        container.innerHTML = `
+            <div style="
+                color:#697486;
+                text-align:center;
+                padding:35px 0;
+                font-size:11px;
+            ">
+                No calculations yet.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    state.history.forEach(item => {
+
+        const element =
+            document.createElement(
+                "div"
+            );
+
+        element.className =
+            "history-item";
+
+
+        element.innerHTML = `
+            <div class="history-expression">
+                ${escapeHTML(item.expression)}
+            </div>
+
+            <div class="history-answer">
+                = ${escapeHTML(item.answer)}
+            </div>
+        `;
+
+
+        element.addEventListener(
+            "click",
+            ()=>{
+
+                state.expression =
+                    item.expression;
+
+                state.answer =
+                    item.answer;
+
+                state.numericAnswer =
+                    Number(item.answer);
+
+                closeSide(
+                    "#historyPanel"
+                );
+
+                updateDisplay();
+
+            }
+        );
+
+
+        container.appendChild(
+            element
+        );
+
+    });
+
+}
+
+
+function escapeHTML(text){
+
+    return String(text)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+
+$("#clearHistory")
+.addEventListener(
+    "click",
+    ()=>{
+
+        state.history = [];
+
+        renderHistory();
+
+    }
+);
+
+
+/* =========================================================
+   MATRIX
+========================================================= */
+
+function createMatrixInputs(){
+
+    const size =
+        state.matrixSize;
+
+
+    ["A","B"].forEach(
+        name => {
+
+            const container =
+                $("#matrix" + name);
+
+
+            container.innerHTML = "";
+
+
+            container.style.gridTemplateColumns =
+                `repeat(${size},1fr)`;
+
+
+            for(
+                let row = 0;
+                row < size;
+                row++
+            ){
+
+                for(
+                    let col = 0;
+                    col < size;
+                    col++
+                ){
+
+                    const input =
+                        document.createElement(
+                            "input"
+                        );
+
+
+                    input.type =
+                        "number";
+
+                    input.step =
+                        "any";
+
+                    input.value =
+                        "0";
+
+                    input.className =
+                        "matrix-cell";
+
+                    input.dataset.row =
+                        row;
+
+                    input.dataset.col =
+                        col;
+
+
+                    container.appendChild(
+                        input
+                    );
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+function readMatrix(name){
+
+    const container =
+        $("#matrix" + name);
+
+
+    const cells =
+        [...container.children];
+
+
+    const size =
+        Math.sqrt(
+            cells.length
+        );
+
+
+    const matrix =
+        Array.from(
+            {length:size},
+            ()=>Array(size).fill(0)
+        );
+
+
+    cells.forEach(cell => {
+
+        const row =
+            Number(cell.dataset.row);
+
+        const col =
+            Number(cell.dataset.col);
+
+
+        matrix[row][col] =
+            Number(cell.value) || 0;
+
+    });
+
+
+    return matrix;
+
+}
+
+
+function writeMatrix(name,matrix){
+
+    const container =
+        $("#matrix" + name);
+
+
+    const cells =
+        [...container.children];
+
+
+    cells.forEach(cell => {
+
+        const row =
+            Number(cell.dataset.row);
+
+        const col =
+            Number(cell.dataset.col);
+
+
+        cell.value =
+            matrix[row][col];
+
+    });
+
+}
+
+
+function matrixAdd(A,B){
+
+    return A.map(
+        (row,i)=>
+            row.map(
+                (value,j)=>
+                    value + B[i][j]
+            )
+    );
+
+}
+
+
+function matrixSubtract(A,B){
+
+    return A.map(
+        (row,i)=>
+            row.map(
+                (value,j)=>
+                    value - B[i][j]
+            )
+    );
+
+}
+
+
+function matrixMultiply(A,B){
+
+    const n =
+        A.length;
+
+
+    const result =
+        Array.from(
+            {length:n},
+            ()=>Array(n).fill(0)
+        );
+
+
+    for(
+        let i=0;
+        i<n;
+        i++
+    ){
+
+        for(
+            let j=0;
+            j<n;
+            j++
+        ){
+
+            for(
+                let k=0;
+                k<n;
+                k++
+            ){
+
+                result[i][j] +=
+                    A[i][k] *
+                    B[k][j];
+
+            }
+
+        }
+
+    }
+
+
+    return result;
+
+}
+
+
+function matrixDeterminant(M){
+
+    const n =
+        M.length;
+
+
+    if(n === 1){
+        return M[0][0];
+    }
+
+
+    if(n === 2){
+
+        return (
+            M[0][0] * M[1][1] -
+            M[0][1] * M[1][0]
+        );
+
+    }
+
+
+    let determinant = 0;
+
+
+    for(
+        let col=0;
+        col<n;
+        col++
+    ){
+
+        const minor =
+            M
+            .slice(1)
+            .map(
+                row =>
+                    row.filter(
+                        (_,index)=>
+                            index !== col
+                    )
+            );
+
+
+        const sign =
+            col % 2 === 0
+                ? 1
+                : -1;
+
+
+        determinant +=
+            sign *
+            M[0][col] *
+            matrixDeterminant(minor);
+
+    }
+
+
+    return determinant;
+
+}
+
+
+function matrixTranspose(M){
+
+    return M[0].map(
+        (_,col)=>
+            M.map(
+                row =>
+                    row[col]
+            )
+    );
+
+}
+
+
+function matrixInverse(M){
+
+    const n =
+        M.length;
+
+
+    const augmented =
+        M.map(
+            (row,i)=>
+                row.concat(
+                    Array.from(
+                        {length:n},
+                        (_,j)=>
+                            i === j
+                                ? 1
+                                : 0
+                    )
+                )
+        );
+
+
+    for(
+        let column=0;
+        column<n;
+        column++
+    ){
+
+        let pivot =
+            column;
+
+
+        for(
+            let row=column+1;
+            row<n;
+            row++
+        ){
+
+            if(
+                Math.abs(
+                    augmented[row][column]
+                ) >
+                Math.abs(
+                    augmented[pivot][column]
+                )
+            ){
+
+                pivot = row;
+
+            }
+
+        }
+
+
+        if(
+            Math.abs(
+                augmented[pivot][column]
+            ) < 1e-12
+        ){
+
+            throw new Error(
+                "Matrix is singular and has no inverse"
+            );
+
+        }
+
+
+        [
+            augmented[column],
+            augmented[pivot]
+        ] =
+        [
+            augmented[pivot],
+            augmented[column]
+        ];
+
+
+        const divisor =
+            augmented[column][column];
+
+
+        for(
+            let j=0;
+            j<2*n;
+            j++
+        ){
+
+            augmented[column][j] /=
+                divisor;
+
+        }
+
+
+        for(
+            let row=0;
+            row<n;
+            row++
+        ){
+
+            if(row === column){
+                continue;
+            }
+
+
+            const factor =
+                augmented[row][column];
+
+
+            for(
+                let j=0;
+                j<2*n;
+                j++
+            ){
+
+                augmented[row][j] -=
+                    factor *
+                    augmented[column][j];
+
+            }
+
+        }
+
+    }
+
+
+    return augmented.map(
+        row =>
+            row.slice(n)
+    );
+
+}
+
+
+function formatMatrix(M){
+
+    return M
+        .map(
+            row =>
+                "[ " +
+                row
+                    .map(
+                        value =>
+                            formatNumber(value)
+                    )
+                    .join("    ") +
+                " ]"
+        )
+        .join("\n");
+
+}
+
+
+$("#matrixSize")
+.addEventListener(
+    "change",
+    ()=>{
+
+        state.matrixSize =
+            Number(
+                $("#matrixSize").value
+            );
+
+        createMatrixInputs();
+
+    }
+);
+
+
+$$("[data-clear-matrix]")
+.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        ()=>{
+
+            const name =
+                button.dataset.clearMatrix;
+
+            const matrix =
+                readMatrix(name);
+
+            writeMatrix(
+                name,
+                matrix.map(
+                    row =>
+                        row.map(
+                            ()=>0
+                        )
+                )
+            );
+
+        }
+    );
+
+});
+
+
+$("#swapMatrices")
+.addEventListener(
+    "click",
+    ()=>{
+
+        const A =
+            readMatrix("A");
+
+        const B =
+            readMatrix("B");
+
+        writeMatrix("A",B);
+        writeMatrix("B",A);
+
+    }
+);
+
+
+$$("[data-matrix-op]")
+.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        ()=>{
+
+            try{
+
+                const A =
+                    readMatrix("A");
+
+                const B =
+                    readMatrix("B");
+
+
+                const operation =
+                    button.dataset.matrixOp;
+
+
+                let result;
+
+
+                switch(operation){
+
+                    case "add":
+
+                        result =
+                            matrixAdd(A,B);
+
+                        break;
+
+
+                    case "sub":
+
+                        result =
+                            matrixSubtract(A,B);
+
+                        break;
+
+
+                    case "mul":
+
+                        result =
+                            matrixMultiply(A,B);
+
+                        break;
+
+
+                    case "detA":
+
+                        $("#matrixResult")
+                            .textContent =
+                            formatNumber(
+                                matrixDeterminant(A)
+                            );
+
+                        return;
+
+
+                    case "detB":
+
+                        $("#matrixResult")
+                            .textContent =
+                            formatNumber(
+                                matrixDeterminant(B)
+                            );
+
+                        return;
+
+
+                    case "invA":
+
+                        result =
+                            matrixInverse(A);
+
+                        break;
+
+
+                    case "invB":
+
+                        result =
+                            matrixInverse(B);
+
+                        break;
+
+
+                    case "trA":
+
+                        result =
+                            matrixTranspose(A);
+
+                        break;
+
+
+                    case "trB":
+
+                        result =
+                            matrixTranspose(B);
+
+                        break;
+
+                }
+
+
+                $("#matrixResult")
+                    .textContent =
+                    formatMatrix(result);
+
+
+            }catch(error){
+
+                $("#matrixResult")
+                    .textContent =
+                    error.message;
+
+            }
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   TOOL WORKSPACE
+========================================================= */
+
+function showToolWorkspace(title,description,html){
+
+    const workspace =
+        $("#toolWorkspace");
+
+
+    workspace.className =
+        "workspace";
+
+
+    workspace.innerHTML = `
+
+        <div class="workspace-title">
+
+            <div>
+
+                <h2>${escapeHTML(title)}</h2>
+
+                <p>
+                    ${escapeHTML(description)}
+                </p>
+
+            </div>
+
+            <button
+                class="back-btn"
+                id="toolBack"
+            >
+                ← Tools
+            </button>
+
+        </div>
+
+        ${html}
+
+    `;
+
+
+    $("#calculatorSection")
+        .classList.add("hidden");
+
+    $("#matrixSection")
+        .classList.add("hidden");
+
+    $("#toolsSection")
+        .classList.add("hidden");
+
+
+    $("#toolBack")
+    .addEventListener(
+        "click",
+        ()=>{
+
+            workspace.classList.add(
+                "hidden"
+            );
+
+            $("#toolsSection")
+                .classList.remove(
+                    "hidden"
+                );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   EQUATION SOLVER
+========================================================= */
+
+function renderEquationTool(){
+
+    showToolWorkspace(
+        "Equation Solver",
+        "Solve linear and quadratic equations.",
+        `
+
+        <div class="card">
+
+            <div class="type-switch">
+
+                <button
+                    class="active"
+                    id="linearType"
+                >
+                    Linear
+                </button>
+
+                <button
+                    id="quadraticType"
+                >
+                    Quadratic
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="card"
+            id="equationForm"
+        ></div>
+
+
+        <div class="card">
+
+            <h3>Result</h3>
+
+            <div
+                class="result"
+                id="equationResult"
+            >
+                Enter coefficients.
+            </div>
+
+        </div>
+
+        `
+    );
+
+
+    renderLinearForm();
+
+
+    $("#linearType")
+    .addEventListener(
+        "click",
+        ()=>{
+
+            $("#linearType")
+                .classList.add("active");
+
+            $("#quadraticType")
+                .classList.remove("active");
+
+            renderLinearForm();
+
+        }
+    );
+
+
+    $("#quadraticType")
+    .addEventListener(
+        "click",
+        ()=>{
+
+            $("#quadraticType")
+                .classList.add("active");
+
+            $("#linearType")
+                .classList.remove("active");
+
+            renderQuadraticForm();
+
+        }
+    );
+
+}
+
+
+function renderLinearForm(){
+
+    $("#equationForm").innerHTML = `
+
+        <h3>
+            Solve ax + b = 0
+        </h3>
+
+        <div class="grid2">
+
+            <input
+                class="input"
+                id="linearA"
+                type="number"
+                step="any"
+                placeholder="a"
+            >
+
+            <input
+                class="input"
+                id="linearB"
+                type="number"
+                step="any"
+                placeholder="b"
+            >
+
+        </div>
+
+        <button
+            class="btn primary"
+            id="solveLinear"
+            style="width:100%;margin-top:8px"
+        >
+            Solve
+        </button>
+
+    `;
+
+
+    $("#solveLinear")
+    .addEventListener(
+        "click",
+        solveLinear
+    );
+
+}
+
+
+function solveLinear(){
+
+    const a =
+        Number(
+            $("#linearA").value
+        );
+
+    const b =
+        Number(
+            $("#linearB").value
+        );
+
+
+    if(
+        !Number.isFinite(a) ||
+        !Number.isFinite(b)
+    ){
+
+        $("#equationResult")
+            .textContent =
+            "Enter valid coefficients.";
+
+        return;
+
+    }
+
+
+    if(
+        Math.abs(a) < 1e-15
+    ){
+
+        if(
+            Math.abs(b) < 1e-15
+        ){
+
+            $("#equationResult")
+                .textContent =
+                "Infinitely many solutions.";
+
+        }else{
+
+            $("#equationResult")
+                .textContent =
+                "No solution.";
+
+        }
+
+        return;
+
+    }
+
+
+    const x =
+        -b / a;
+
+
+    $("#equationResult")
+        .textContent =
+`Equation:
+${a}x + ${b} = 0
+
+x = ${formatNumber(x)}`;
+
+}
+
+
+function renderQuadraticForm(){
+
+    $("#equationForm").innerHTML = `
+
+        <h3>
+            Solve ax² + bx + c = 0
+        </h3>
+
+        <div class="grid2">
+
+            <input
+                class="input"
+                id="quadA"
+                type="number"
+                step="any"
+                placeholder="a"
+            >
+
+            <input
+                class="input"
+                id="quadB"
+                type="number"
+                step="any"
+                placeholder="b"
+            >
+
+        </div>
+
+        <input
+            class="input"
+            id="quadC"
+            type="number"
+            step="any"
+            placeholder="c"
+            style="margin-top:8px"
+        >
+
+        <button
+            class="btn primary"
+            id="solveQuadratic"
+            style="width:100%;margin-top:8px"
+        >
+            Solve
+        </button>
+
+    `;
+
+
+    $("#solveQuadratic")
+    .addEventListener(
+        "click",
+        solveQuadratic
+    );
+
+}
+
+
+function solveQuadratic(){
+
+    const a =
+        Number(
+            $("#quadA").value
+        );
+
+    const b =
+        Number(
+            $("#quadB").value
+        );
+
+    const c =
+        Number(
+            $("#quadC").value
+        );
+
+
+    if(
+        ![
+            a,
+            b,
+            c
+        ].every(Number.isFinite)
+    ){
+
+        $("#equationResult")
+            .textContent =
+            "Enter valid coefficients.";
+
+        return;
+
+    }
+
+
+    if(
+        Math.abs(a) < 1e-15
+    ){
+
+        if(
+            Math.abs(b) < 1e-15
+        ){
+
+            $("#equationResult")
+                .textContent =
+                Math.abs(c) < 1e-15
+                    ? "Infinitely many solutions."
+                    : "No solution.";
+
+        }else{
+
+            $("#equationResult")
+                .textContent =
+`a = 0, so this becomes linear.
+
+x = ${formatNumber(-c/b)}`;
+
+        }
+
+        return;
+
+    }
+
+
+    const D =
+        b*b -
+        4*a*c;
+
+
+    if(D > 1e-12){
+
+        const sqrtD =
+            Math.sqrt(D);
+
+        const x1 =
+            (-b + sqrtD) /
+            (2*a);
+
+        const x2 =
+            (-b - sqrtD) /
+            (2*a);
+
+
+        $("#equationResult")
+            .textContent =
+`Equation:
+${a}x² + ${b}x + ${c} = 0
+
+Discriminant:
+Δ = ${formatNumber(D)}
+
+x₁ = ${formatNumber(x1)}
+
+x₂ = ${formatNumber(x2)}`;
+
+        return;
+
+    }
+
+
+    if(Math.abs(D) <= 1e-12){
+
+        const x =
+            -b/(2*a);
+
+
+        $("#equationResult")
+            .textContent =
+`Equation:
+${a}x² + ${b}x + ${c} = 0
+
+Discriminant:
+Δ = 0
+
+Repeated root:
+x = ${formatNumber(x)}`;
+
+        return;
+
+    }
+
+
+    const real =
+        -b/(2*a);
+
+    const imaginary =
+        Math.sqrt(-D)/(2*Math.abs(a));
+
+
+    $("#equationResult")
+        .textContent =
+`Equation:
+${a}x² + ${b}x + ${c} = 0
+
+Discriminant:
+Δ = ${formatNumber(D)}
+
+Complex roots:
+
+x₁ = ${formatNumber(real)}
+     + ${formatNumber(imaginary)}i
+
+x₂ = ${formatNumber(real)}
+     − ${formatNumber(imaginary)}i`;
+
+}
+
+
+/* =========================================================
+   STATISTICS
+========================================================= */
+
+function renderStatisticsTool(){
+
+    showToolWorkspace(
+        "Statistics",
+        "Calculate descriptive statistics from a data set.",
+        `
+
+        <div class="card">
+
+            <h3>Data</h3>
+
+            <input
+                class="input"
+                id="statisticsData"
+                placeholder="Example: 4, 7, 8, 10, 12"
+            >
+
+            <div class="row" style="margin-top:8px">
+
+                <button
+                    class="btn primary"
+                    id="calculateStatistics"
+                >
+                    Calculate
+                </button>
+
+                <button
+                    class="btn"
+                    id="sampleStatistics"
+                >
+                    Sample SD
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Result</h3>
+
+            <div
+                class="result"
+                id="statisticsResult"
+            >
+                Enter comma-separated values.
+            </div>
+
+        </div>
+
+        `
+    );
+
+
+    $("#calculateStatistics")
+    .addEventListener(
+        "click",
+        ()=>calculateStatistics(false)
+    );
+
+
+    $("#sampleStatistics")
+    .addEventListener(
+        "click",
+        ()=>calculateStatistics(true)
+    );
+
+}
+
+
+function calculateStatistics(sample){
+
+    const text =
+        $("#statisticsData")
+        .value
+        .trim();
+
+
+    const values =
+        text
+        .split(/[,;\s]+/)
+        .filter(Boolean)
+        .map(Number);
+
+
+    if(
+        !values.length ||
+        values.some(
+            value =>
+                !Number.isFinite(value)
+        )
+    ){
+
+        $("#statisticsResult")
+            .textContent =
+            "Enter valid numerical values.";
+
+        return;
+
+    }
+
+
+    const n =
+        values.length;
+
+
+    const sorted =
+        [...values]
+        .sort(
+            (a,b)=>a-b
+        );
+
+
+    const sum =
+        values.reduce(
+            (a,b)=>a+b,
+            0
+        );
+
+
+    const mean =
+        sum/n;
+
+
+    let median;
+
+
+    if(n % 2 === 1){
+
+        median =
+            sorted[
+                Math.floor(n/2)
+            ];
+
+    }else{
+
+        median =
+            (
+                sorted[n/2-1] +
+                sorted[n/2]
+            )/2;
+
+    }
+
+
+    const frequencies =
+        new Map();
+
+
+    values.forEach(
+        value =>
+            frequencies.set(
+                value,
+                (frequencies.get(value)||0)+1
+            )
+    );
+
+
+    const maxFrequency =
+        Math.max(
+            ...frequencies.values()
+        );
+
+
+    const modes =
+        maxFrequency > 1
+            ? [...frequencies.entries()]
+                .filter(
+                    ([,frequency]) =>
+                        frequency === maxFrequency
+                )
+                .map(
+                    ([value]) =>
+                        value
+                )
+            : [];
+
+
+    const squaredDeviation =
+        values.reduce(
+            (sum,value)=>
+                sum +
+                Math.pow(
+                    value-mean,
+                    2
+                ),
+            0
+        );
+
+
+    const variance =
+        sample
+            ? (
+                n > 1
+                    ? squaredDeviation/(n-1)
+                    : NaN
+            )
+            : squaredDeviation/n;
+
+
+    const standardDeviation =
+        Math.sqrt(variance);
+
+
+    const q1 =
+        percentile(
+            sorted,
+            .25
+        );
+
+
+    const q3 =
+        percentile(
+            sorted,
+            .75
+        );
+
+
+    $("#statisticsResult")
+        .textContent =
+`Count = ${n}
+Sum = ${formatNumber(sum)}
+Mean = ${formatNumber(mean)}
+Median = ${formatNumber(median)}
+Mode = ${modes.length ? modes.map(formatNumber).join(", ") : "No unique mode"}
+
+Minimum = ${formatNumber(sorted[0])}
+Maximum = ${formatNumber(sorted[n-1])}
+
+Q1 = ${formatNumber(q1)}
+Q3 = ${formatNumber(q3)}
+Range = ${formatNumber(sorted[n-1]-sorted[0])}
+
+${sample ? "Sample" : "Population"} variance = ${
+    Number.isFinite(variance)
+        ? formatNumber(variance)
+        : "undefined"
+}
+
+${sample ? "Sample" : "Population"} SD = ${
+    Number.isFinite(standardDeviation)
+        ? formatNumber(standardDeviation)
+        : "undefined"
+}`;
+
+}
+
+
+function percentile(sorted,p){
+
+    if(sorted.length === 1){
+        return sorted[0];
+    }
+
+
+    const index =
+        (sorted.length-1)*p;
+
+
+    const lower =
+        Math.floor(index);
+
+    const upper =
+        Math.ceil(index);
+
+
+    if(lower === upper){
+        return sorted[lower];
+    }
+
+
+    const weight =
+        index-lower;
+
+
+    return (
+        sorted[lower] *
+        (1-weight)
+    ) +
+    (
+        sorted[upper] *
+        weight
+    );
+
+}
+
+
+/* =========================================================
+   CALCULUS
+========================================================= */
+
+function renderCalculusTool(){
+
+    showToolWorkspace(
+        "Calculus",
+        "Numerical differentiation and definite integration.",
+        `
+
+        <div class="card">
+
+            <h3>
+                Numerical derivative
+            </h3>
+
+            <p class="small-note">
+                Use x as the variable.
+                Example: x^2 + 3*x
+            </p>
+
+            <input
+                class="input"
+                id="derivativeExpression"
+                placeholder="f(x) = x^2 + 3*x"
+            >
+
+            <input
+                class="input"
+                id="derivativePoint"
+                type="number"
+                step="any"
+                value="2"
+                placeholder="x"
+                style="margin-top:8px"
+            >
+
+            <button
+                class="btn primary"
+                id="calculateDerivative"
+                style="width:100%;margin-top:8px"
+            >
+                Find f′(x)
+            </button>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                Definite integration
+            </h3>
+
+            <p class="small-note">
+                Simpson's rule is used for numerical
+                integration.
+            </p>
+
+            <input
+                class="input"
+                id="integralExpression"
+                placeholder="f(x) = x^2"
+            >
+
+            <div
+                class="grid2"
+                style="margin-top:8px"
+            >
+
+                <input
+                    class="input"
+                    id="integralLower"
+                    type="number"
+                    step="any"
+                    value="0"
+                    placeholder="Lower limit"
+                >
+
+                <input
+                    class="input"
+                    id="integralUpper"
+                    type="number"
+                    step="any"
+                    value="1"
+                    placeholder="Upper limit"
+                >
+
+            </div>
+
+            <button
+                class="btn primary"
+                id="calculateIntegral"
+                style="width:100%;margin-top:8px"
+            >
+                Integrate
+            </button>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Result</h3>
+
+            <div
+                class="result"
+                id="calculusResult"
+            >
+                Enter a function.
+            </div>
+
+        </div>
+
+        `
+    );
+
+
+    $("#calculateDerivative")
+    .addEventListener(
+        "click",
+        calculateDerivative
+    );
+
+
+    $("#calculateIntegral")
+    .addEventListener(
+        "click",
+        calculateIntegral
+    );
+
+}
+
+
+function functionFromExpression(expression){
+
+    const cleaned =
+        expression
+        .replace(/\s+/g,"");
+
+
+    if(!cleaned){
+        throw new Error(
+            "Enter a function"
+        );
+    }
+
+
+    return x =>
+        evaluate(
+            cleaned,
+            x
+        );
+
+}
+
+
+function calculateDerivative(){
+
+    try{
+
+        const expression =
+            $("#derivativeExpression")
+            .value;
+
+
+        const x =
+            Number(
+                $("#derivativePoint").value
+            );
+
+
+        if(!Number.isFinite(x)){
+            throw new Error(
+                "Enter a valid x value"
+            );
+        }
+
+
+        const f =
+            functionFromExpression(
+                expression
+            );
+
+
+        /*
+         Central difference.
+
+         A very small but practical step is
+         selected based on the magnitude of x.
+        */
+
+        const h =
+            Math.max(
+                1e-5,
+                Math.abs(x)*1e-5
+            );
+
+
+        const result =
+            (
+                f(x+h) -
+                f(x-h)
+            ) /
+            (2*h);
+
+
+        $("#calculusResult")
+            .textContent =
+`f(x) = ${expression}
+
+x = ${formatNumber(x)}
+
+f′(${formatNumber(x)}) ≈
+${formatNumber(result)}`;
+
+    }catch(error){
+
+        $("#calculusResult")
+            .textContent =
+            error.message;
+
+    }
+
+}
+
+
+function calculateIntegral(){
+
+    try{
+
+        const expression =
+            $("#integralExpression")
+            .value;
+
+
+        let a =
+            Number(
+                $("#integralLower").value
+            );
+
+
+        let b =
+            Number(
+                $("#integralUpper").value
+            );
+
+
+        if(
+            !Number.isFinite(a) ||
+            !Number.isFinite(b)
+        ){
+
+            throw new Error(
+                "Enter valid limits"
+            );
+
+        }
+
+
+        const f =
+            functionFromExpression(
+                expression
+            );
+
+
+        let sign = 1;
+
+
+        if(b < a){
+
+            [
+                a,
+                b
+            ] = [
+                b,
+                a
+            ];
+
+            sign = -1;
+
+        }
+
+
+        if(a === b){
+
+            $("#calculusResult")
+                .textContent =
+`∫ from ${a} to ${b} = 0`;
+
+            return;
+
+        }
+
+
+        /*
+         Composite Simpson's rule.
+
+         n must be even.
+        */
+
+        const n = 2000;
+
+        const h =
+            (b-a)/n;
+
+
+        let sum =
+            f(a) +
+            f(b);
+
+
+        for(
+            let i=1;
+            i<n;
+            i++
+        ){
+
+            const x =
+                a+i*h;
+
+            sum +=
+                (
+                    i % 2 === 0
+                        ? 2
+                        : 4
+                ) *
+                f(x);
+
+        }
+
+
+        const result =
+            sign *
+            (
+                h/3
+            ) *
+            sum;
+
+
+        $("#calculusResult")
+            .textContent =
+`f(x) = ${expression}
+
+Lower limit = ${formatNumber(a)}
+Upper limit = ${formatNumber(b)}
+
+∫ f(x) dx ≈
+${formatNumber(result)}`;
+
+    }catch(error){
+
+        $("#calculusResult")
+            .textContent =
+            error.message;
+
+    }
+
+}
+
+
+/* =========================================================
+   CONVERSIONS
+========================================================= */
+
+function renderConversionTool(){
+
+    showToolWorkspace(
+        "Conversions",
+        "Convert common units quickly.",
+        `
+
+        <div class="card">
+
+            <h3>Convert</h3>
+
+            <input
+                class="input"
+                id="conversionValue"
+                type="number"
+                step="any"
+                value="1"
+            >
+
+            <select
+                class="select"
+                id="conversionType"
+                style="margin-top:8px"
+            >
+
+                <optgroup label="Length">
+                    <option value="km-m">
+                        kilometre → metre
+                    </option>
+
+                    <option value="m-km">
+                        metre → kilometre
+                    </option>
+
+                    <option value="cm-m">
+                        centimetre → metre
+                    </option>
+
+                    <option value="m-cm">
+                        metre → centimetre
+                    </option>
+
+                    <option value="mm-m">
+                        millimetre → metre
+                    </option>
+
+                    <option value="m-mm">
+                        metre → millimetre
+                    </option>
+
+                    <option value="mi-km">
+                        mile → kilometre
+                    </option>
+
+                    <option value="km-mi">
+                        kilometre → mile
+                    </option>
+
+                    <option value="ft-m">
+                        foot → metre
+                    </option>
+
+                    <option value="m-ft">
+                        metre → foot
+                    </option>
+                </optgroup>
+
+
+                <optgroup label="Area">
+
+                    <option value="m2-km2">
+                        m² → km²
+                    </option>
+
+                    <option value="km2-m2">
+                        km² → m²
+                    </option>
+
+                    <option value="acre-m2">
+                        acre → m²
+                    </option>
+
+                    <option value="m2-acre">
+                        m² → acre
+                    </option>
+
+                </optgroup>
+
+
+                <optgroup label="Mass">
+
+                    <option value="kg-g">
+                        kilogram → gram
+                    </option>
+
+                    <option value="g-kg">
+                        gram → kilogram
+                    </option>
+
+                    <option value="mg-g">
+                        milligram → gram
+                    </option>
+
+                    <option value="g-mg">
+                        gram → milligram
+                    </option>
+
+                    <option value="lb-kg">
+                        pound → kilogram
+                    </option>
+
+                    <option value="kg-lb">
+                        kilogram → pound
+                    </option>
+
+                </optgroup>
+
+
+                <optgroup label="Temperature">
+
+                    <option value="c-f">
+                        Celsius → Fahrenheit
+                    </option>
+
+                    <option value="f-c">
+                        Fahrenheit → Celsius
+                    </option>
+
+                    <option value="c-k">
+                        Celsius → Kelvin
+                    </option>
+
+                    <option value="k-c">
+                        Kelvin → Celsius
+                    </option>
+
+                </optgroup>
+
+
+                <optgroup label="Speed">
+
+                    <option value="kmh-ms">
+                        km/h → m/s
+                    </option>
+
+                    <option value="ms-kmh">
+                        m/s → km/h
+                    </option>
+
+                    <option value="mph-kmh">
+                        mph → km/h
+                    </option>
+
+                    <option value="kmh-mph">
+                        km/h → mph
+                    </option>
+
+                </optgroup>
+
+
+                <optgroup label="Time">
+
+                    <option value="h-min">
+                        hour → minute
+                    </option>
+
+                    <option value="min-h">
+                        minute → hour
+                    </option>
+
+                    <option value="min-sec">
+                        minute → second
+                    </option>
+
+                    <option value="sec-min">
+                        second → minute
+                    </option>
+
+                </optgroup>
+
+
+                <optgroup label="Angle">
+
+                    <option value="deg-rad">
+                        degree → radian
+                    </option>
+
+                    <option value="rad-deg">
+                        radian → degree
+                    </option>
+
+                    <option value="deg-grad">
+                        degree → gradian
+                    </option>
+
+                    <option value="grad-deg">
+                        gradian → degree
+                    </option>
+
+                </optgroup>
+
+
+                <optgroup label="Pressure">
+
+                    <option value="atm-pa">
+                        atmosphere → pascal
+                    </option>
+
+                    <option value="pa-atm">
+                        pascal → atmosphere
+                    </option>
+
+                    <option value="bar-pa">
+                        bar → pascal
+                    </option>
+
+                    <option value="pa-bar">
+                        pascal → bar
+                    </option>
+
+                </optgroup>
+
+            </select>
+
+
+            <button
+                class="btn primary"
+                id="performConversion"
+                style="width:100%;margin-top:8px"
+            >
+                Convert
+            </button>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Result</h3>
+
+            <div
+                class="result"
+                id="conversionResult"
+            >
+                Result will appear here.
+            </div>
+
+        </div>
+
+        `
+    );
+
+
+    $("#performConversion")
+    .addEventListener(
+        "click",
+        performConversion
+    );
+
+}
+
+
+function performConversion(){
+
+    const value =
+        Number(
+            $("#conversionValue").value
+        );
+
+
+    const type =
+        $("#conversionType").value;
+
+
+    if(!Number.isFinite(value)){
+
+        $("#conversionResult")
+            .textContent =
+            "Enter a valid number.";
+
+        return;
+
+    }
+
+
+    const conversions = {
+
+        "km-m":
+            v=>v*1000,
+
+        "m-km":
+            v=>v/1000,
+
+        "cm-m":
+            v=>v/100,
+
+        "m-cm":
+            v=>v*100,
+
+        "mm-m":
+            v=>v/1000,
+
+        "m-mm":
+            v=>v*1000,
+
+        "mi-km":
+            v=>v*1.609344,
+
+        "km-mi":
+            v=>v/1.609344,
+
+        "ft-m":
+            v=>v*0.3048,
+
+        "m-ft":
+            v=>v/0.3048,
+
+        "m2-km2":
+            v=>v/1e6,
+
+        "km2-m2":
+            v=>v*1e6,
+
+        "acre-m2":
+            v=>v*4046.8564224,
+
+        "m2-acre":
+            v=>v/4046.8564224,
+
+        "kg-g":
+            v=>v*1000,
+
+        "g-kg":
+            v=>v/1000,
+
+        "mg-g":
+            v=>v/1000,
+
+        "g-mg":
+            v=>v*1000,
+
+        "lb-kg":
+            v=>v*0.45359237,
+
+        "kg-lb":
+            v=>v/0.45359237,
+
+        "c-f":
+            v=>v*9/5+32,
+
+        "f-c":
+            v=>(v-32)*5/9,
+
+        "c-k":
+            v=>v+273.15,
+
+        "k-c":
+            v=>v-273.15,
+
+        "kmh-ms":
+            v=>v/3.6,
+
+        "ms-kmh":
+            v=>v*3.6,
+
+        "mph-kmh":
+            v=>v*1.609344,
+
+        "kmh-mph":
+            v=>v/1.609344,
+
+        "h-min":
+            v=>v*60,
+
+        "min-h":
+            v=>v/60,
+
+        "min-sec":
+            v=>v*60,
+
+        "sec-min":
+            v=>v/60,
+
+        "deg-rad":
+            v=>v*Math.PI/180,
+
+        "rad-deg":
+            v=>v*180/Math.PI,
+
+        "deg-grad":
+            v=>v*10/9,
+
+        "grad-deg":
+            v=>v*0.9,
+
+        "atm-pa":
+            v=>v*101325,
+
+        "pa-atm":
+            v=>v/101325,
+
+        "bar-pa":
+            v=>v*100000,
+
+        "pa-bar":
+            v=>v/100000
+
+    };
+
+
+    const converter =
+        conversions[type];
+
+
+    if(!converter){
+
+        $("#conversionResult")
+            .textContent =
+            "Conversion unavailable.";
+
+        return;
+
+    }
+
+
+    const result =
+        converter(value);
+
+
+    $("#conversionResult")
+        .textContent =
+        formatNumber(result);
+
+}
+
+
+/* =========================================================
+   BASE-N
+========================================================= */
+
+function renderBaseTool(){
+
+    showToolWorkspace(
+        "Base-N",
+        "Convert between binary, octal, decimal and hexadecimal.",
+        `
+
+        <div class="card">
+
+            <h3>Number</h3>
+
+            <input
+                class="input"
+                id="baseInput"
+                value="255"
+            >
+
+            <select
+                class="select"
+                id="baseInputType"
+                style="margin-top:8px"
+            >
+
+                <option value="10">
+                    Decimal
+                </option>
+
+                <option value="2">
+                    Binary
+                </option>
+
+                <option value="8">
+                    Octal
+                </option>
+
+                <option value="16">
+                    Hexadecimal
+                </option>
+
+            </select>
+
+
+            <button
+                class="btn primary"
+                id="convertBase"
+                style="width:100%;margin-top:8px"
+            >
+                Convert
+            </button>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Result</h3>
+
+            <div
+                class="result"
+                id="baseResult"
+            >
+                Enter a number.
+            </div>
+
+        </div>
+
+        `
+    );
+
+
+    $("#convertBase")
+    .addEventListener(
+        "click",
+        convertBase
+    );
+
+}
+
+
+function convertBase(){
+
+    const input =
+        $("#baseInput")
+        .value
+        .trim()
+        .toUpperCase();
+
+
+    const base =
+        Number(
+            $("#baseInputType").value
+        );
+
+
+    if(!input){
+
+        $("#baseResult")
+            .textContent =
+            "Enter a number.";
+
+        return;
+
+    }
+
+
+    /*
+       BigInt gives exact integer conversion
+       for values beyond normal JS integer precision.
+    */
+
+    try{
+
+        let decimal;
+
+
+        if(base === 10){
+
+            decimal =
+                BigInt(input);
+
+        }else{
+
+            let sign = "";
+
+            let digits = input;
+
+
+            if(
+                digits.startsWith("-")
+            ){
+
+                sign = "-";
+                digits =
+                    digits.slice(1);
+
+            }
+
+
+            if(!digits){
+                throw new Error(
+                    "Invalid number"
+                );
+            }
+
+
+            const valid =
+                base === 2
+                    ? /^[01]+$/
+                    : base === 8
+                        ? /^[0-7]+$/
+                        : /^[0-9A-F]+$/;
+
+
+            if(!valid.test(digits)){
+
+                throw new Error(
+                    "Invalid digits for selected base"
+                );
+
+            }
+
+
+            decimal =
+                BigInt(
+                    sign +
+                    (
+                        base === 2
+                            ? "0b"
+                            : base === 8
+                                ? "0o"
+                                : "0x"
+                    ) +
+                    digits
+                );
+
+        }
+
+
+        $("#baseResult")
+            .textContent =
+`DEC = ${decimal.toString(10)}
+BIN = ${decimal.toString(2).toUpperCase()}
+OCT = ${decimal.toString(8).toUpperCase()}
+HEX = ${decimal.toString(16).toUpperCase()}`;
+
+    }catch(error){
+
+        $("#baseResult")
+            .textContent =
+            error.message;
+
+    }
+
+}
+
+
+/* =========================================================
+   COMBINATORICS
+========================================================= */
+
+function renderCombinatoricsTool(){
+
+    showToolWorkspace(
+        "Combinatorics",
+        "Calculate factorials, permutations and combinations.",
+        `
+
+        <div class="card">
+
+            <h3>Enter n and r</h3>
+
+            <div class="grid2">
+
+                <input
+                    class="input"
+                    id="combN"
+                    type="number"
+                    min="0"
+                    step="1"
+                    value="5"
+                    placeholder="n"
+                >
+
+                <input
+                    class="input"
+                    id="combR"
+                    type="number"
+                    min="0"
+                    step="1"
+                    value="2"
+                    placeholder="r"
+                >
+
+            </div>
+
+
+            <button
+                class="btn primary"
+                id="calculateCombinations"
+                style="width:100%;margin-top:8px"
+            >
+                Calculate
+            </button>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Result</h3>
+
+            <div
+                class="result"
+                id="combinationResult"
+            >
+                Result will appear here.
+            </div>
+
+        </div>
+
+        `
+    );
+
+
+    $("#calculateCombinations")
+    .addEventListener(
+        "click",
+        calculateCombinations
+    );
+
+}
+
+
+function calculateCombinations(){
+
+    try{
+
+        const n =
+            Number(
+                $("#combN").value
+            );
+
+        const r =
+            Number(
+                $("#combR").value
+            );
+
+
+        if(
+            !Number.isInteger(n) ||
+            !Number.isInteger(r)
+        ){
+
+            throw new Error(
+                "n and r must be whole numbers"
+            );
+
+        }
+
+
+        if(n < 0 || r < 0){
+
+            throw new Error(
+                "n and r must be non-negative"
+            );
+
+        }
+
+
+        if(r > n){
+
+            throw new Error(
+                "r cannot be greater than n"
+            );
+
+        }
+
+
+        /*
+           For factorial, normal JS Number
+           is used because factorial() supports
+           up to 170!.
+        */
+
+        const nFact =
+            factorial(n);
+
+
+        const nPr =
+            factorial(n) /
+            factorial(n-r);
+
+
+        const nCr =
+            factorial(n) /
+            (
+                factorial(r) *
+                factorial(n-r)
+            );
+
+
+        $("#combinationResult")
+            .textContent =
+`n! = ${formatNumber(nFact)}
+
+nPr = ${formatNumber(nPr)}
+
+nCr = ${formatNumber(nCr)}`;
+
+    }catch(error){
+
+        $("#combinationResult")
+            .textContent =
+            error.message;
+
+    }
+
+}
+
+
+/* =========================================================
+   TOOL BUTTONS
+========================================================= */
+
+$$("[data-tool]")
+.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        ()=>{
+
+            const tool =
+                button.dataset.tool;
+
+
+            switch(tool){
+
+                case "equation":
+                    renderEquationTool();
+                    break;
+
+                case "statistics":
+                    renderStatisticsTool();
+                    break;
+
+                case "calculus":
+                    renderCalculusTool();
+                    break;
+
+                case "conversion":
+                    renderConversionTool();
+                    break;
+
+                case "base":
+                    renderBaseTool();
+                    break;
+
+                case "combinatorics":
+                    renderCombinatoricsTool();
+                    break;
+
+            }
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   SIDE PANELS
+========================================================= */
+
+function openSide(selector){
+
+    $(selector)
+        .classList.add("open");
+
+}
+
+
+function closeSide(selector){
+
+    $(selector)
+        .classList.remove("open");
+
+}
+
+
+$("#helpButton")
+.addEventListener(
+    "click",
+    ()=>{
+        openSide("#helpPanel");
+    }
+);
+
+
+$("#historyButton")
+.addEventListener(
+    "click",
+    ()=>{
+        openSide("#historyPanel");
+    }
+);
+
+
+$$("[data-close]")
+.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        ()=>{
+
+            closeSide(
+                "#" +
+                button.dataset.close
+            );
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   HELP SEARCH
+========================================================= */
+
+$("#helpSearch")
+.addEventListener(
+    "input",
+    event => {
+
+        const query =
+            event.target.value
+            .toLowerCase()
+            .trim();
+
+
+        $$(".guide")
+        .forEach(
+            guide => {
+
+                guide.style.display =
+                    guide.textContent
+                    .toLowerCase()
+                    .includes(query)
+                        ? "grid"
+                        : "none";
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+state.matrixSize = 2;
+
+createMatrixInputs();
+
+renderHistory();
+
+updateDisplay();
+
+</script>
 
 </body>
 </html>
