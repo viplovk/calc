@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="A beginner-friendly scientific calculator for students."
+    >
+
+    <title>CalcWise — Scientific Calculator</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="header">
+
+        <div class="brand">
+            <div class="brand-icon">∑</div>
+
+            <div>
+                <h1>CalcWise</h1>
+                <p>Student Scientific Calculator</p>
+            </div>
+        </div>
+
+        <div class="header-actions">
+
+            <button
+                class="header-button"
+                id="historyButton"
+                title="Calculation history"
+            >
+                <span>↶</span>
+                <span>History</span>
+            </button>
+
+            <button
+                class="header-button"
+                id="helpButton"
+                title="Open calculator guide"
+            >
+                <span>?</span>
+                <span>Help</span>
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main">
+
+        <section class="calculator">
+
+            <!-- Mode selector -->
+
+            <div class="mode-bar">
+
+                <button class="mode active" data-mode="basic">
+                    <strong>Quick</strong>
+                    <small>Easy calculations</small>
+                </button>
+
+                <button class="mode" data-mode="scientific">
+                    <strong>Scientific</strong>
+                    <small>Full calculator</small>
+                </button>
+
+                <button class="mode" data-mode="advanced">
+                    <strong>Advanced</strong>
+                    <small>More tools</small>
+                </button>
+
+            </div>
+
+
+            <!-- Display -->
+
+            <div class="display">
+
+                <div class="display-top">
+
+                    <span id="angleIndicator">DEG</span>
+
+                    <span id="memoryIndicator"></span>
+
+                </div>
+
+                <div
+                    class="expression"
+                    id="expression"
+                    aria-label="Current expression"
+                >
+                    0
+                </div>
+
+                <div
+                    class="answer"
+                    id="answer"
+                    aria-live="polite"
+                >
+                    0
+                </div>
+
+                <div class="display-hint" id="displayHint">
+                    Try: 25 × 4 + 10
+                </div>
+
+            </div>
+
+
+            <!-- Quick tips -->
+
+            <div class="tip">
+
+                <span class="tip-icon">💡</span>
+
+                <span>
+                    New to scientific calculators?
+                    <button id="tipHelp">See how to use it</button>
+                </span>
+
+            </div>
+
+
+            <!-- Scientific controls -->
+
+            <div
+                class="scientific-panel hidden"
+                id="scientificPanel"
+            >
+
+                <div class="function-group">
+
+                    <button
+                        class="function-button"
+                        data-value="sin("
+                        data-help="Sine"
+                    >
+                        <strong>sin</strong>
+                        <small>Sine</small>
+                    </button>
+
+                    <button
+                        class="function-button"
+                        data-value="cos("
+                        data-help="Cosine"
+                    >
+                        <strong>cos</strong>
+                        <small>Cosine</small>
+                    </button>
+
+                    <button
+                        class="function-button"
+                        data-value="tan("
+                        data-help="Tangent"
+                    >
+                        <strong>tan</strong>
+                        <small>Tangent</small>
+                    </button>
+
+                    <button
+                        class="function-button"
+                        data-value="log("
+                        data-help="Base-10 logarithm"
+                    >
+                        <strong>log</strong>
+                        <small>Base 10</small>
+                    </button>
+
+                    <button
+                        class="function-button"
+                        data-value="ln("
+                        data-help="Natural logarithm"
+                    >
+                        <strong>ln</strong>
+                        <small>Natural log</small>
+                    </button>
+
+                    <button
+                        class="function-button"
+                        data-value="sqrt("
+                        data-help="Square root"
+                    >
+                        <strong>√</strong>
+                        <small>Square root</small>
+                    </button>
+
+                    <button
+                        class="function-button"
+                        data-value="^2"
+                        data-help="Square a number"
+                    >
+                        <strong>x²</strong>
+                        <small>Square</small>
+                    </button>
+
+                    <button
+                        class="function-button"
+                        data-value="^"
+                        data-help="Raise to a power"
+                    >
+                        <strong>xʸ</strong>
+                        <small>Power</small>
+                    </button>
+
+                </div>
+
+
+                <div class="angle-selector">
+
+                    <span>Angle:</span>
+
+                    <button class="angle active" data-angle="DEG">
+                        DEG
+                    </button>
+
+                    <button class="angle" data-angle="RAD">
+                        RAD
+                    </button>
+
+                    <button class="angle" data-angle="GRAD">
+                        GRAD
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Advanced tools -->
+
+            <div
+                class="advanced-panel hidden"
+                id="advancedPanel"
+            >
+
+                <button class="tool-card" data-tool="equation">
+                    <span>ƒ(x)</span>
+                    <div>
+                        <strong>Equation Solver</strong>
+                        <small>Solve equations step-by-step</small>
+                    </div>
+                    <span>›</span>
+                </button>
+
+                <button class="tool-card" data-tool="matrix">
+                    <span>▦</span>
+                    <div>
+                        <strong>Matrix</strong>
+                        <small>Add, multiply and solve matrices</small>
+                    </div>
+                    <span>›</span>
+                </button>
+
+                <button class="tool-card" data-tool="statistics">
+                    <span>σ</span>
+                    <div>
+                        <strong>Statistics</strong>
+                        <small>Mean, median, standard deviation</small>
+                    </div>
+                    <span>›</span>
+                </button>
+
+                <button class="tool-card" data-tool="conversion">
+                    <span>⇄</span>
+                    <div>
+                        <strong>Conversions</strong>
+                        <small>Units, angles and more</small>
+                    </div>
+                    <span>›</span>
+                </button>
+
+            </div>
+
+
+            <!-- Calculator keypad -->
+
+            <div class="keypad">
+
+                <button
+                    class="key secondary"
+                    data-action="memory-clear"
+                >
+                    MC
+                </button>
+
+                <button
+                    class="key secondary"
+                    data-action="memory-recall"
+                >
+                    MR
+                </button>
+
+                <button
+                    class="key secondary"
+                    data-action="memory-add"
+                >
+                    M+
+                </button>
+
+                <button
+                    class="key secondary"
+                    data-action="memory-subtract"
+                >
+                    M−
+                </button>
+
+                <button
+                    class="key danger"
+                    data-action="clear"
+                >
+                    AC
+                </button>
+
+
+                <button class="key function" data-value="(">(</button>
+                <button class="key function" data-value=")">)</button>
+
+                <button
+                    class="key function"
+                    data-value="%"
+                >
+                    %
+                </button>
+
+                <button
+                    class="key function"
+                    data-action="backspace"
+                >
+                    ⌫
+                </button>
+
+                <button
+                    class="key operator"
+                    data-value="÷"
+                >
+                    ÷
+                </button>
+
+
+                <button class="key number" data-value="7">7</button>
+                <button class="key number" data-value="8">8</button>
+                <button class="key number" data-value="9">9</button>
+
+                <button
+                    class="key operator"
+                    data-value="×"
+                >
+                    ×
+                </button>
+
+                <button
+                    class="key function"
+                    data-value="!"
+                >
+                    x!
+                </button>
+
+
+                <button class="key number" data-value="4">4</button>
+                <button class="key number" data-value="5">5</button>
+                <button class="key number" data-value="6">6</button>
+
+                <button
+                    class="key operator"
+                    data-value="−"
+                >
+                    −
+                </button>
+
+                <button
+                    class="key function"
+                    data-value="π"
+                >
+                    π
+                </button>
+
+
+                <button class="key number" data-value="1">1</button>
+                <button class="key number" data-value="2">2</button>
+                <button class="key number" data-value="3">3</button>
+
+                <button
+                    class="key operator"
+                    data-value="+"
+                >
+                    +
+                </button>
+
+                <button
+                    class="key function"
+                    data-value="e"
+                >
+                    e
+                </button>
+
+
+                <button
+                    class="key number zero"
+                    data-value="0"
+                >
+                    0
+                </button>
+
+                <button
+                    class="key number"
+                    data-value="."
+                >
+                    .
+                </button>
+
+                <button
+                    class="key function"
+                    data-action="ans"
+                >
+                    Ans
+                </button>
+
+                <button
+                    class="key equals"
+                    data-action="calculate"
+                >
+                    =
+                </button>
+
+            </div>
+
+
+            <!-- Keyboard guide -->
+
+            <div class="keyboard-guide">
+                <span><kbd>Enter</kbd> Calculate</span>
+                <span><kbd>Esc</kbd> Clear</span>
+                <span><kbd>Backspace</kbd> Delete</span>
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- ================= HISTORY PANEL ================= -->
+
+<aside
+    class="side-panel"
+    id="historyPanel"
+    aria-hidden="true"
+>
+
+    <div class="side-header">
+
+        <div>
+            <h2>History</h2>
+            <p>Your previous calculations</p>
+        </div>
+
+        <button class="close-button" data-close="historyPanel">
+            ×
+        </button>
+
+    </div>
+
+    <button class="clear-history" id="clearHistory">
+        Clear history
+    </button>
+
+    <div id="historyList" class="history-list"></div>
+
+</aside>
+
+
+<!-- ================= HELP PANEL ================= -->
+
+<aside
+    class="side-panel help-panel"
+    id="helpPanel"
+    aria-hidden="true"
+>
+
+    <div class="side-header">
+
+        <div>
+            <h2>Calculator Guide</h2>
+            <p>Learn as you calculate</p>
+        </div>
+
+        <button class="close-button" data-close="helpPanel">
+            ×
+        </button>
+
+    </div>
+
+
+    <!-- Help search -->
+
+    <div class="help-search">
+
+        <span>⌕</span>
+
+        <input
+            id="helpSearch"
+            type="search"
+            placeholder="Search the guide..."
+            aria-label="Search help"
+        >
+
+    </div>
+
+
+    <div class="help-content">
+
+        <section class="help-section">
+
+            <div class="help-icon">🚀</div>
+
+            <div>
+
+                <h3>Getting started</h3>
+
+                <p>
+                    Enter numbers using the keypad and press
+                    <strong>=</strong> to calculate.
+                </p>
+
+                <div class="example">
+                    <span>Example</span>
+                    <code>25 × 4 + 10 = 110</code>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="help-section">
+
+            <div class="help-icon">📐</div>
+
+            <div>
+
+                <h3>Trigonometry</h3>
+
+                <p>
+                    Use sin, cos and tan for triangle and angle
+                    calculations.
+                </p>
+
+                <div class="example">
+
+                    <span>Example</span>
+
+                    <code>
+                        sin(30) = 0.5
+                    </code>
+
+                    <small>
+                        Make sure DEG is selected when using degrees.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="help-section">
+
+            <div class="help-icon">🔢</div>
+
+            <div>
+
+                <h3>Powers and roots</h3>
+
+                <p>
+                    Use x² for squares, xʸ for powers and √ for
+                    square roots.
+                </p>
+
+                <div class="example">
+
+                    <span>Examples</span>
+
+                    <code>
+                        5² = 25
+                    </code>
+
+                    <code>
+                        √81 = 9
+                    </code>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="help-section">
+
+            <div class="help-icon">🧮</div>
+
+            <div>
+
+                <h3>Order of operations</h3>
+
+                <p>
+                    The calculator follows normal mathematical
+                    order:
+                </p>
+
+                <ol>
+                    <li>Brackets</li>
+                    <li>Powers and roots</li>
+                    <li>Multiplication and division</li>
+                    <li>Addition and subtraction</li>
+                </ol>
+
+                <div class="example">
+
+                    <span>Example</span>
+
+                    <code>
+                        2 + 3 × 4 = 14
+                    </code>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="help-section">
+
+            <div class="help-icon">🧠</div>
+
+            <div>
+
+                <h3>Memory buttons</h3>
+
+                <ul class="help-list">
+                    <li><strong>MC</strong> — Clear memory</li>
+                    <li><strong>MR</strong> — Recall memory</li>
+                    <li><strong>M+</strong> — Add to memory</li>
+                    <li><strong>M−</strong> — Subtract from memory</li>
+                </ul>
+
+            </div>
+
+        </section>
+
+
+        <section class="help-section">
+
+            <div class="help-icon">📚</div>
+
+            <div>
+
+                <h3>What should I use?</h3>
+
+                <div class="mode-guide">
+
+                    <div>
+                        <strong>Quick</strong>
+                        <span>Daily arithmetic</span>
+                    </div>
+
+                    <div>
+                        <strong>Scientific</strong>
+                        <span>School & engineering maths</span>
+                    </div>
+
+                    <div>
+                        <strong>Advanced</strong>
+                        <span>Equations, statistics & matrices</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="help-section">
+
+            <div class="help-icon">⌨️</div>
+
+            <div>
+
+                <h3>Keyboard shortcuts</h3>
+
+                <p>
+                    You can use your physical keyboard too.
+                </p>
+
+                <div class="shortcut-grid">
+
+                    <span><kbd>0–9</kbd> Numbers</span>
+                    <span><kbd>+</kbd> Add</span>
+                    <span><kbd>−</kbd> Subtract</span>
+                    <span><kbd>*</kbd> Multiply</span>
+                    <span><kbd>/</kbd> Divide</span>
+                    <span><kbd>Enter</kbd> Calculate</span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</aside>
+
+
+<!-- ================= TOOL MODAL ================= -->
+
+<div
+    class="modal-overlay"
+    id="toolModal"
+    aria-hidden="true"
+>
+
+    <div class="modal">
+
+        <button
+            class="modal-close"
+            id="modalClose"
+        >
+            ×
+        </button>
+
+        <div id="modalContent"></div>
+
+    </div>
+
+</div>
+
+
+<script src="app.js"></script>
+
+</body>
+</html>
