@@ -1,18 +1,8 @@
 "use strict";
 
-/*
-    CalcWise
-    Beginner-friendly scientific calculator
-
-    Important:
-    This calculator uses a controlled mathematical parser.
-    It does NOT directly execute user input as JavaScript.
-*/
-
-
-/* =========================================================
+/* =====================================================
    STATE
-========================================================= */
+===================================================== */
 
 const state = {
 
@@ -24,20 +14,18 @@ const state = {
 
     memory: 0,
 
-    angleMode: "DEG",
+    angle: "DEG",
 
-    currentMode: "basic",
+    mode: "basic",
 
-    history: [],
-
-    secondMode: false
+    history: []
 
 };
 
 
-/* =========================================================
-   DOM
-========================================================= */
+/* =====================================================
+   ELEMENTS
+===================================================== */
 
 const expressionEl =
     document.getElementById("expression");
@@ -45,40 +33,52 @@ const expressionEl =
 const answerEl =
     document.getElementById("answer");
 
-const angleIndicator =
-    document.getElementById("angleIndicator");
+const angleModeEl =
+    document.getElementById("angleMode");
 
-const memoryIndicator =
-    document.getElementById("memoryIndicator");
+const memoryStatusEl =
+    document.getElementById("memoryStatus");
 
-const displayHint =
-    document.getElementById("displayHint");
+const scientificFunctions =
+    document.getElementById("scientificFunctions");
 
-const scientificPanel =
-    document.getElementById("scientificPanel");
+const angleRow =
+    document.getElementById("angleRow");
 
-const advancedPanel =
-    document.getElementById("advancedPanel");
+const calculatorView =
+    document.getElementById("calculatorView");
 
-const historyPanel =
-    document.getElementById("historyPanel");
+const matrixView =
+    document.getElementById("matrixView");
+
+const toolsView =
+    document.getElementById("toolsView");
+
+const matrixSize =
+    document.getElementById("matrixSize");
+
+const matrixA =
+    document.getElementById("matrixA");
+
+const matrixB =
+    document.getElementById("matrixB");
+
+const matrixResult =
+    document.getElementById("matrixResult");
 
 const helpPanel =
     document.getElementById("helpPanel");
 
+const historyPanel =
+    document.getElementById("historyPanel");
+
 const historyList =
     document.getElementById("historyList");
 
-const toolModal =
-    document.getElementById("toolModal");
 
-const modalContent =
-    document.getElementById("modalContent");
-
-
-/* =========================================================
+/* =====================================================
    DISPLAY
-========================================================= */
+===================================================== */
 
 function updateDisplay() {
 
@@ -86,27 +86,15 @@ function updateDisplay() {
         state.expression || "0";
 
     answerEl.textContent =
-        state.answer || "0";
+        state.answer;
 
-    angleIndicator.textContent =
-        state.angleMode;
+    angleModeEl.textContent =
+        state.angle;
 
-    memoryIndicator.textContent =
+    memoryStatusEl.textContent =
         state.memory !== 0
             ? `M ${formatNumber(state.memory)}`
             : "";
-
-    if (!state.expression) {
-
-        displayHint.textContent =
-            "Try: 25 × 4 + 10";
-
-    } else {
-
-        displayHint.textContent =
-            "Press = to calculate";
-
-    }
 }
 
 
@@ -120,82 +108,28 @@ function formatNumber(value) {
         value = 0;
     }
 
-    const rounded =
-        Number(value.toPrecision(12));
-
-    return rounded.toLocaleString(
-        "en-US",
-        {
-            maximumFractionDigits: 12
-        }
-    );
+    return Number(
+        value.toPrecision(12)
+    ).toString();
 }
 
 
-/* =========================================================
-   INPUT
-========================================================= */
-
-function addValue(value) {
-
-    /*
-        If answer was just displayed and user enters
-        a new number, start a new calculation.
-    */
-
-    if (
-        state.expression === "" &&
-        state.answer !== "0" &&
-        /^[0-9.]$/.test(value)
-    ) {
-        state.answer = "0";
-    }
-
-    state.expression += value;
-
-    updateDisplay();
-}
-
-
-function clearCalculator() {
-
-    state.expression = "";
-    state.answer = "0";
-
-    updateDisplay();
-}
-
-
-function backspace() {
-
-    state.expression =
-        state.expression.slice(0, -1);
-
-    updateDisplay();
-}
-
-
-function insertAnswer() {
-
-    state.expression +=
-        String(state.previousAnswer);
-
-    updateDisplay();
-}
-
-
-/* =========================================================
-   ANGLES
-========================================================= */
+/* =====================================================
+   ANGLE
+===================================================== */
 
 function toRadians(value) {
 
-    if (state.angleMode === "DEG") {
-        return value * Math.PI / 180;
+    if (state.angle === "DEG") {
+
+        return value *
+            Math.PI / 180;
     }
 
-    if (state.angleMode === "GRAD") {
-        return value * Math.PI / 200;
+    if (state.angle === "GRAD") {
+
+        return value *
+            Math.PI / 200;
     }
 
     return value;
@@ -204,41 +138,53 @@ function toRadians(value) {
 
 function fromRadians(value) {
 
-    if (state.angleMode === "DEG") {
-        return value * 180 / Math.PI;
+    if (state.angle === "DEG") {
+
+        return value *
+            180 / Math.PI;
     }
 
-    if (state.angleMode === "GRAD") {
-        return value * 200 / Math.PI;
+    if (state.angle === "GRAD") {
+
+        return value *
+            200 / Math.PI;
     }
 
     return value;
 }
 
 
-/* =========================================================
-   MATH FUNCTIONS
-========================================================= */
+/* =====================================================
+   FACTORIAL
+===================================================== */
 
 function factorial(n) {
 
-    if (!Number.isFinite(n)) {
-        throw new Error("Invalid factorial");
-    }
+    if (
+        !Number.isInteger(n) ||
+        n < 0
+    ) {
 
-    if (n < 0 || !Number.isInteger(n)) {
         throw new Error(
-            "Factorial requires a whole number"
+            "Factorial needs a whole number"
         );
     }
 
     if (n > 170) {
-        throw new Error("Number too large");
+
+        throw new Error(
+            "Number too large"
+        );
     }
 
     let result = 1;
 
-    for (let i = 2; i <= n; i++) {
+    for (
+        let i = 2;
+        i <= n;
+        i++
+    ) {
+
         result *= i;
     }
 
@@ -246,9 +192,9 @@ function factorial(n) {
 }
 
 
-/* =========================================================
+/* =====================================================
    TOKENIZER
-========================================================= */
+===================================================== */
 
 function tokenize(input) {
 
@@ -256,19 +202,19 @@ function tokenize(input) {
 
     let i = 0;
 
+
     while (i < input.length) {
 
         const char = input[i];
 
-        /* Ignore spaces */
 
         if (/\s/.test(char)) {
+
             i++;
+
             continue;
         }
 
-
-        /* Numbers */
 
         if (
             /[0-9.]/.test(char)
@@ -286,27 +232,31 @@ function tokenize(input) {
                 i++;
             }
 
-            const parsed =
+
+            const value =
                 Number(number);
 
-            if (!Number.isFinite(parsed)) {
+
+            if (!Number.isFinite(value)) {
+
                 throw new Error(
                     "Invalid number"
                 );
             }
 
+
             tokens.push({
                 type: "number",
-                value: parsed
+                value
             });
 
             continue;
         }
 
 
-        /* Operators */
-
-        if ("+-*/^%!".includes(char)) {
+        if (
+            "+-*/^%!".includes(char)
+        ) {
 
             tokens.push({
                 type: "operator",
@@ -319,9 +269,10 @@ function tokenize(input) {
         }
 
 
-        /* Parentheses */
-
-        if (char === "(" || char === ")") {
+        if (
+            char === "(" ||
+            char === ")"
+        ) {
 
             tokens.push({
                 type: "paren",
@@ -333,8 +284,6 @@ function tokenize(input) {
             continue;
         }
 
-
-        /* Constants */
 
         if (char === "π") {
 
@@ -362,8 +311,6 @@ function tokenize(input) {
         }
 
 
-        /* Functions */
-
         if (/[a-zA-Z]/.test(char)) {
 
             let name = "";
@@ -377,6 +324,7 @@ function tokenize(input) {
 
                 i++;
             }
+
 
             tokens.push({
                 type: "function",
@@ -392,15 +340,16 @@ function tokenize(input) {
         );
     }
 
+
     return tokens;
 }
 
 
-/* =========================================================
+/* =====================================================
    PARSER
-========================================================= */
+===================================================== */
 
-function evaluateExpression(input) {
+function evaluate(input) {
 
     const tokens =
         tokenize(input);
@@ -420,10 +369,11 @@ function evaluateExpression(input) {
     }
 
 
-    function parseExpression() {
+    function expression() {
 
         let value =
-            parseTerm();
+            term();
+
 
         while (
             peek() &&
@@ -437,23 +387,29 @@ function evaluateExpression(input) {
                 consume().value;
 
             const right =
-                parseTerm();
+                term();
+
 
             if (operator === "+") {
+
                 value += right;
+
             } else {
+
                 value -= right;
             }
         }
+
 
         return value;
     }
 
 
-    function parseTerm() {
+    function term() {
 
         let value =
-            parsePower();
+            power();
+
 
         while (
             peek() &&
@@ -467,13 +423,17 @@ function evaluateExpression(input) {
                 consume().value;
 
             const right =
-                parsePower();
+                power();
+
 
             if (operator === "*") {
+
                 value *= right;
+
             } else {
 
                 if (right === 0) {
+
                     throw new Error(
                         "Cannot divide by zero"
                     );
@@ -483,14 +443,16 @@ function evaluateExpression(input) {
             }
         }
 
+
         return value;
     }
 
 
-    function parsePower() {
+    function power() {
 
         let value =
-            parseUnary();
+            unary();
+
 
         if (
             peek() &&
@@ -500,7 +462,7 @@ function evaluateExpression(input) {
             consume();
 
             const exponent =
-                parsePower();
+                power();
 
             value =
                 Math.pow(
@@ -509,11 +471,12 @@ function evaluateExpression(input) {
                 );
         }
 
+
         return value;
     }
 
 
-    function parseUnary() {
+    function unary() {
 
         if (
             peek() &&
@@ -522,7 +485,7 @@ function evaluateExpression(input) {
 
             consume();
 
-            return +parseUnary();
+            return unary();
         }
 
 
@@ -533,60 +496,65 @@ function evaluateExpression(input) {
 
             consume();
 
-            return -parseUnary();
+            return -unary();
         }
 
-        return parsePostfix();
+
+        return postfix();
     }
 
 
-    function parsePostfix() {
+    function postfix() {
 
         let value =
-            parsePrimary();
+            primary();
 
-        while (peek()) {
 
-            if (peek().value === "!") {
+        while (
+            peek() &&
+            (
+                peek().value === "!" ||
+                peek().value === "%"
+            )
+        ) {
 
-                consume();
+            const operator =
+                consume().value;
+
+
+            if (operator === "!") {
 
                 value =
                     factorial(value);
 
-                continue;
-            }
-
-
-            if (peek().value === "%") {
-
-                consume();
+            } else {
 
                 value /= 100;
-
-                continue;
             }
-
-            break;
         }
+
 
         return value;
     }
 
 
-    function parsePrimary() {
+    function primary() {
 
         const token =
             peek();
 
+
         if (!token) {
+
             throw new Error(
                 "Incomplete expression"
             );
         }
 
 
-        if (token.type === "number") {
+        if (
+            token.type === "number"
+        ) {
 
             consume();
 
@@ -594,51 +562,16 @@ function evaluateExpression(input) {
         }
 
 
-        if (token.type === "paren") {
-
-            if (token.value === "(") {
-
-                consume();
-
-                const value =
-                    parseExpression();
-
-                if (
-                    !peek() ||
-                    peek().value !== ")"
-                ) {
-
-                    throw new Error(
-                        "Missing closing bracket"
-                    );
-                }
-
-                consume();
-
-                return value;
-            }
-        }
-
-
-        if (token.type === "function") {
-
-            const name =
-                consume().value;
-
-            if (
-                !peek() ||
-                peek().value !== "("
-            ) {
-
-                throw new Error(
-                    `${name} needs parentheses`
-                );
-            }
+        if (
+            token.type === "paren" &&
+            token.value === "("
+        ) {
 
             consume();
 
-            const argument =
-                parseExpression();
+            const value =
+                expression();
+
 
             if (
                 !peek() ||
@@ -646,15 +579,60 @@ function evaluateExpression(input) {
             ) {
 
                 throw new Error(
-                    "Missing closing bracket"
+                    "Missing )"
                 );
             }
 
+
             consume();
+
+            return value;
+        }
+
+
+        if (
+            token.type === "function"
+        ) {
+
+            const name =
+                consume().value;
+
+
+            if (
+                !peek() ||
+                peek().value !== "("
+            ) {
+
+                throw new Error(
+                    `${name} needs (`
+                );
+            }
+
+
+            consume();
+
+
+            const value =
+                expression();
+
+
+            if (
+                !peek() ||
+                peek().value !== ")"
+            ) {
+
+                throw new Error(
+                    "Missing )"
+                );
+            }
+
+
+            consume();
+
 
             return applyFunction(
                 name,
-                argument
+                value
             );
         }
 
@@ -666,13 +644,13 @@ function evaluateExpression(input) {
 
 
     const result =
-        parseExpression();
+        expression();
 
 
-    if (position < tokens.length) {
+    if (position !== tokens.length) {
 
         throw new Error(
-            "Unexpected input"
+            "Invalid expression"
         );
     }
 
@@ -689,9 +667,9 @@ function evaluateExpression(input) {
 }
 
 
-/* =========================================================
+/* =====================================================
    FUNCTIONS
-========================================================= */
+===================================================== */
 
 function applyFunction(
     name,
@@ -701,39 +679,47 @@ function applyFunction(
     switch (name) {
 
         case "sin":
+
             return Math.sin(
                 toRadians(value)
             );
 
         case "cos":
+
             return Math.cos(
                 toRadians(value)
             );
 
         case "tan":
+
             return Math.tan(
                 toRadians(value)
             );
 
         case "asin":
+
             return fromRadians(
                 Math.asin(value)
             );
 
         case "acos":
+
             return fromRadians(
                 Math.acos(value)
             );
 
         case "atan":
+
             return fromRadians(
                 Math.atan(value)
             );
 
         case "sqrt":
+
             if (value < 0) {
+
                 throw new Error(
-                    "Square root of a negative number"
+                    "Invalid square root"
                 );
             }
 
@@ -742,8 +728,9 @@ function applyFunction(
         case "log":
 
             if (value <= 0) {
+
                 throw new Error(
-                    "log requires a positive number"
+                    "log needs positive value"
                 );
             }
 
@@ -752,36 +739,26 @@ function applyFunction(
         case "ln":
 
             if (value <= 0) {
+
                 throw new Error(
-                    "ln requires a positive number"
+                    "ln needs positive value"
                 );
             }
 
             return Math.log(value);
 
-        case "abs":
-            return Math.abs(value);
-
-        case "floor":
-            return Math.floor(value);
-
-        case "ceil":
-            return Math.ceil(value);
-
-        case "exp":
-            return Math.exp(value);
-
         default:
+
             throw new Error(
-                `Unknown function: ${name}`
+                "Unknown function"
             );
     }
 }
 
 
-/* =========================================================
+/* =====================================================
    CALCULATE
-========================================================= */
+===================================================== */
 
 function calculate() {
 
@@ -789,26 +766,46 @@ function calculate() {
         return;
     }
 
+
     try {
 
-        const result =
-            evaluateExpression(
+        const value =
+            evaluate(
                 state.expression
             );
 
-        const formatted =
-            formatNumber(result);
+
+        const result =
+            formatNumber(value);
+
 
         state.answer =
-            formatted;
-
-        state.previousAnswer =
             result;
 
-        addHistory(
-            state.expression,
-            formatted
-        );
+        state.previousAnswer =
+            value;
+
+
+        state.history.unshift({
+
+            expression:
+                state.expression,
+
+            answer:
+                result
+
+        });
+
+
+        if (
+            state.history.length > 50
+        ) {
+
+            state.history.pop();
+        }
+
+
+        renderHistory();
 
         updateDisplay();
 
@@ -817,48 +814,989 @@ function calculate() {
         state.answer =
             "Error";
 
-        displayHint.textContent =
-            error.message;
-
         updateDisplay();
+
+        setTimeout(
+            () => {
+
+                if (
+                    state.answer === "Error"
+                ) {
+
+                    state.answer = "0";
+
+                    updateDisplay();
+                }
+
+            },
+            1600
+        );
     }
 }
 
 
-/* =========================================================
-   HISTORY
-========================================================= */
+/* =====================================================
+   INPUT
+===================================================== */
 
-function addHistory(
-    expression,
-    answer
-) {
+function addValue(value) {
 
-    state.history.unshift({
-        expression,
-        answer
+    state.expression +=
+        value;
+
+    updateDisplay();
+}
+
+
+function clear() {
+
+    state.expression = "";
+
+    state.answer = "0";
+
+    updateDisplay();
+}
+
+
+function backspace() {
+
+    state.expression =
+        state.expression.slice(
+            0,
+            -1
+        );
+
+    updateDisplay();
+}
+
+
+/* =====================================================
+   MEMORY
+===================================================== */
+
+function memoryAction(action) {
+
+    const current =
+        Number(
+            state.answer
+                .replaceAll(",", "")
+        );
+
+
+    switch (action) {
+
+        case "mc":
+
+            state.memory = 0;
+
+            break;
+
+
+        case "mr":
+
+            state.expression +=
+                String(
+                    state.memory
+                );
+
+            break;
+
+
+        case "mplus":
+
+            if (
+                Number.isFinite(current)
+            ) {
+
+                state.memory +=
+                    current;
+            }
+
+            break;
+
+
+        case "mminus":
+
+            if (
+                Number.isFinite(current)
+            ) {
+
+                state.memory -=
+                    current;
+            }
+
+            break;
+    }
+
+
+    updateDisplay();
+}
+
+
+/* =====================================================
+   MODE SWITCH
+===================================================== */
+
+document
+    .querySelectorAll(".nav-mode")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                document
+                    .querySelectorAll(".nav-mode")
+                    .forEach(
+                        item =>
+                            item.classList.remove(
+                                "active"
+                            )
+                    );
+
+
+                button.classList.add(
+                    "active"
+                );
+
+
+                state.mode =
+                    button.dataset.mode;
+
+
+                calculatorView.classList.toggle(
+                    "hidden",
+                    state.mode === "matrix" ||
+                    state.mode === "tools"
+                );
+
+
+                matrixView.classList.toggle(
+                    "hidden",
+                    state.mode !== "matrix"
+                );
+
+
+                toolsView.classList.toggle(
+                    "hidden",
+                    state.mode !== "tools"
+                );
+
+
+                const scientific =
+                    state.mode ===
+                    "scientific";
+
+
+                scientificFunctions.classList.toggle(
+                    "hidden",
+                    !scientific
+                );
+
+
+                angleRow.classList.toggle(
+                    "hidden",
+                    !scientific
+                );
+            }
+        );
     });
 
-    if (state.history.length > 50) {
-        state.history.pop();
-    }
 
-    renderHistory();
+/* =====================================================
+   KEYPAD
+===================================================== */
+
+document
+    .querySelectorAll(".key")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const value =
+                    button.dataset.value;
+
+                const action =
+                    button.dataset.action;
+
+
+                if (
+                    value !== undefined
+                ) {
+
+                    addValue(value);
+
+                    return;
+                }
+
+
+                switch (action) {
+
+                    case "calculate":
+
+                        calculate();
+
+                        break;
+
+
+                    case "clear":
+
+                        clear();
+
+                        break;
+
+
+                    case "backspace":
+
+                        backspace();
+
+                        break;
+
+
+                    case "ans":
+
+                        addValue(
+                            String(
+                                state.previousAnswer
+                            )
+                        );
+
+                        break;
+
+
+                    case "mc":
+                    case "mr":
+                    case "mplus":
+                    case "mminus":
+
+                        memoryAction(action);
+
+                        break;
+                }
+            }
+        );
+    });
+
+
+/* =====================================================
+   SCIENTIFIC BUTTONS
+===================================================== */
+
+document
+    .querySelectorAll(".science-key")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                addValue(
+                    button.dataset.value
+                );
+            }
+        );
+    });
+
+
+/* =====================================================
+   ANGLE
+===================================================== */
+
+document
+    .querySelectorAll(".angle")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                document
+                    .querySelectorAll(".angle")
+                    .forEach(
+                        b =>
+                            b.classList.remove(
+                                "active"
+                            )
+                    );
+
+
+                button.classList.add(
+                    "active"
+                );
+
+
+                state.angle =
+                    button.dataset.angle;
+
+
+                updateDisplay();
+            }
+        );
+    });
+
+
+/* =====================================================
+   MATRIX CREATION
+===================================================== */
+
+function createMatrix(
+    container,
+    size,
+    name
+) {
+
+    container.innerHTML = "";
+
+    container.style.gridTemplateColumns =
+        `repeat(${size}, 1fr)`;
+
+
+    for (
+        let row = 0;
+        row < size;
+        row++
+    ) {
+
+        for (
+            let col = 0;
+            col < size;
+            col++
+        ) {
+
+            const input =
+                document.createElement(
+                    "input"
+                );
+
+
+            input.type = "number";
+
+            input.value = "0";
+
+            input.className =
+                "matrix-cell";
+
+            input.dataset.matrix =
+                name;
+
+            input.dataset.row =
+                row;
+
+            input.dataset.col =
+                col;
+
+
+            container.appendChild(
+                input
+            );
+        }
+    }
 }
 
+
+function getMatrix(container) {
+
+    const cells =
+        [...container.querySelectorAll(
+            ".matrix-cell"
+        )];
+
+
+    const size =
+        Math.sqrt(
+            cells.length
+        );
+
+
+    const matrix =
+        Array.from(
+            { length: size },
+            () =>
+                Array(size).fill(0)
+        );
+
+
+    cells.forEach(cell => {
+
+        const row =
+            Number(cell.dataset.row);
+
+        const col =
+            Number(cell.dataset.col);
+
+        matrix[row][col] =
+            Number(cell.value) || 0;
+
+    });
+
+
+    return matrix;
+}
+
+
+function clearMatrix(
+    container
+) {
+
+    container
+        .querySelectorAll(
+            ".matrix-cell"
+        )
+        .forEach(
+            cell =>
+                cell.value = "0"
+        );
+}
+
+
+/* =====================================================
+   MATRIX MATH
+===================================================== */
+
+function matrixAdd(A, B) {
+
+    return A.map(
+        (row, i) =>
+            row.map(
+                (value, j) =>
+                    value + B[i][j]
+            )
+    );
+}
+
+
+function matrixSubtract(A, B) {
+
+    return A.map(
+        (row, i) =>
+            row.map(
+                (value, j) =>
+                    value - B[i][j]
+            )
+    );
+}
+
+
+function matrixMultiply(A, B) {
+
+    const n = A.length;
+
+    const result =
+        Array.from(
+            { length: n },
+            () =>
+                Array(n).fill(0)
+        );
+
+
+    for (
+        let i = 0;
+        i < n;
+        i++
+    ) {
+
+        for (
+            let j = 0;
+            j < n;
+            j++
+        ) {
+
+            for (
+                let k = 0;
+                k < n;
+                k++
+            ) {
+
+                result[i][j] +=
+                    A[i][k] *
+                    B[k][j];
+            }
+        }
+    }
+
+
+    return result;
+}
+
+
+function determinant(M) {
+
+    const n = M.length;
+
+
+    if (n === 1) {
+
+        return M[0][0];
+    }
+
+
+    if (n === 2) {
+
+        return (
+            M[0][0] * M[1][1] -
+            M[0][1] * M[1][0]
+        );
+    }
+
+
+    let det = 0;
+
+
+    for (
+        let col = 0;
+        col < n;
+        col++
+    ) {
+
+        const minor =
+            M
+                .slice(1)
+                .map(
+                    row =>
+                        row.filter(
+                            (_, index) =>
+                                index !== col
+                        )
+                );
+
+
+        det +=
+            (
+                col % 2 === 0
+                    ? 1
+                    : -1
+            ) *
+            M[0][col] *
+            determinant(minor);
+    }
+
+
+    return det;
+}
+
+
+function transpose(M) {
+
+    return M[0].map(
+        (_, col) =>
+            M.map(
+                row =>
+                    row[col]
+            )
+    );
+}
+
+
+function inverse(M) {
+
+    const n = M.length;
+
+    const A =
+        M.map(
+            (row, i) => [
+
+                ...row,
+
+                ...Array.from(
+                    { length: n },
+                    (_, j) =>
+                        i === j ? 1 : 0
+                )
+
+            ]
+        );
+
+
+    for (
+        let i = 0;
+        i < n;
+        i++
+    ) {
+
+        let pivot = i;
+
+
+        for (
+            let r = i + 1;
+            r < n;
+            r++
+        ) {
+
+            if (
+                Math.abs(
+                    A[r][i]
+                ) >
+                Math.abs(
+                    A[pivot][i]
+                )
+            ) {
+
+                pivot = r;
+            }
+        }
+
+
+        if (
+            Math.abs(
+                A[pivot][i]
+            ) < 1e-12
+        ) {
+
+            throw new Error(
+                "Matrix is not invertible"
+            );
+        }
+
+
+        [
+            A[i],
+            A[pivot]
+        ] =
+        [
+            A[pivot],
+            A[i]
+        ];
+
+
+        const divisor =
+            A[i][i];
+
+
+        for (
+            let j = 0;
+            j < 2 * n;
+            j++
+        ) {
+
+            A[i][j] /=
+                divisor;
+        }
+
+
+        for (
+            let r = 0;
+            r < n;
+            r++
+        ) {
+
+            if (r === i) {
+                continue;
+            }
+
+
+            const factor =
+                A[r][i];
+
+
+            for (
+                let j = 0;
+                j < 2 * n;
+                j++
+            ) {
+
+                A[r][j] -=
+                    factor *
+                    A[i][j];
+            }
+        }
+    }
+
+
+    return A.map(
+        row =>
+            row.slice(n)
+    );
+}
+
+
+/* =====================================================
+   MATRIX DISPLAY
+===================================================== */
+
+function displayMatrix(M) {
+
+    matrixResult.textContent =
+        M
+            .map(
+                row =>
+                    "[ " +
+                    row
+                        .map(
+                            value =>
+                                formatNumber(
+                                    value
+                                )
+                        )
+                        .join("   ") +
+                    " ]"
+            )
+            .join("\n");
+}
+
+
+/* =====================================================
+   MATRIX EVENTS
+===================================================== */
+
+matrixSize.addEventListener(
+    "change",
+    () => {
+
+        const size =
+            Number(
+                matrixSize.value
+            );
+
+
+        createMatrix(
+            matrixA,
+            size,
+            "A"
+        );
+
+
+        createMatrix(
+            matrixB,
+            size,
+            "B"
+        );
+
+
+        matrixResult.textContent =
+            "Choose an operation.";
+    }
+);
+
+
+document
+    .querySelectorAll(
+        ".clear-matrix"
+    )
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                clearMatrix(
+                    button.dataset.matrix === "A"
+                        ? matrixA
+                        : matrixB
+                );
+            }
+        );
+    });
+
+
+document
+    .querySelectorAll(
+        "[data-matrix-op]"
+    )
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                try {
+
+                    const A =
+                        getMatrix(matrixA);
+
+                    const B =
+                        getMatrix(matrixB);
+
+                    let result;
+
+
+                    switch (
+                        button.dataset.matrixOp
+                    ) {
+
+                        case "add":
+
+                            result =
+                                matrixAdd(
+                                    A,
+                                    B
+                                );
+
+                            break;
+
+
+                        case "subtract":
+
+                            result =
+                                matrixSubtract(
+                                    A,
+                                    B
+                                );
+
+                            break;
+
+
+                        case "multiply":
+
+                            result =
+                                matrixMultiply(
+                                    A,
+                                    B
+                                );
+
+                            break;
+
+
+                        case "detA":
+
+                            matrixResult.textContent =
+                                formatNumber(
+                                    determinant(A)
+                                );
+
+                            return;
+
+
+                        case "detB":
+
+                            matrixResult.textContent =
+                                formatNumber(
+                                    determinant(B)
+                                );
+
+                            return;
+
+
+                        case "inverseA":
+
+                            result =
+                                inverse(A);
+
+                            break;
+
+
+                        case "inverseB":
+
+                            result =
+                                inverse(B);
+
+                            break;
+
+
+                        case "transposeA":
+
+                            result =
+                                transpose(A);
+
+                            break;
+
+
+                        case "transposeB":
+
+                            result =
+                                transpose(B);
+
+                            break;
+                    }
+
+
+                    displayMatrix(result);
+
+                } catch (error) {
+
+                    matrixResult.textContent =
+                        error.message;
+                }
+            }
+        );
+    });
+
+
+/* =====================================================
+   HELP / HISTORY
+===================================================== */
+
+function openPanel(panel) {
+
+    panel.classList.add(
+        "open"
+    );
+}
+
+
+function closePanel(panel) {
+
+    panel.classList.remove(
+        "open"
+    );
+}
+
+
+document
+    .getElementById("helpBtn")
+    .addEventListener(
+        "click",
+        () =>
+            openPanel(helpPanel)
+    );
+
+
+document
+    .getElementById("historyBtn")
+    .addEventListener(
+        "click",
+        () =>
+            openPanel(historyPanel)
+    );
+
+
+document
+    .getElementById("matrixHelp")
+    .addEventListener(
+        "click",
+        () =>
+            openPanel(helpPanel)
+    );
+
+
+document
+    .querySelectorAll("[data-close]")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                closePanel(
+                    document.getElementById(
+                        button.dataset.close
+                    )
+                );
+            }
+        );
+    });
+
+
+/* =====================================================
+   HISTORY
+===================================================== */
 
 function renderHistory() {
 
     historyList.innerHTML = "";
 
-    if (state.history.length === 0) {
+
+    if (
+        state.history.length === 0
+    ) {
 
         historyList.innerHTML = `
             <div style="
-                color:#8b95a7;
-                font-size:12px;
-                padding:25px 0;
+                color:#687386;
                 text-align:center;
+                padding:35px 0;
+                font-size:11px;
             ">
                 No calculations yet.
             </div>
@@ -871,13 +1809,18 @@ function renderHistory() {
     state.history.forEach(item => {
 
         const element =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         element.className =
             "history-item";
 
+
         const expression =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         expression.className =
             "history-expression";
@@ -885,14 +1828,18 @@ function renderHistory() {
         expression.textContent =
             item.expression;
 
+
         const answer =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         answer.className =
             "history-answer";
 
         answer.textContent =
             `= ${item.answer}`;
+
 
         element.append(
             expression,
@@ -922,7 +1869,6 @@ function renderHistory() {
         historyList.appendChild(
             element
         );
-
     });
 }
 
@@ -940,505 +1886,54 @@ document
     );
 
 
-/* =========================================================
-   MEMORY
-========================================================= */
-
-function memoryAction(action) {
-
-    let value =
-        Number(
-            String(state.answer)
-                .replaceAll(",", "")
-        );
-
-    if (!Number.isFinite(value)) {
-        value = 0;
-    }
-
-
-    switch (action) {
-
-        case "memory-clear":
-            state.memory = 0;
-            break;
-
-        case "memory-recall":
-
-            state.expression +=
-                String(state.memory);
-
-            break;
-
-        case "memory-add":
-
-            state.memory += value;
-
-            break;
-
-        case "memory-subtract":
-
-            state.memory -= value;
-
-            break;
-    }
-
-    updateDisplay();
-}
-
-
-/* =========================================================
-   MODE SWITCHING
-========================================================= */
-
-document
-    .querySelectorAll(".mode")
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                document
-                    .querySelectorAll(".mode")
-                    .forEach(
-                        b => b.classList.remove(
-                            "active"
-                        )
-                    );
-
-                button.classList.add(
-                    "active"
-                );
-
-
-                state.currentMode =
-                    button.dataset.mode;
-
-
-                scientificPanel.classList.toggle(
-                    "hidden",
-                    state.currentMode !==
-                    "scientific"
-                );
-
-
-                advancedPanel.classList.toggle(
-                    "hidden",
-                    state.currentMode !==
-                    "advanced"
-                );
-            }
-        );
-    });
-
-
-/* =========================================================
-   ANGLE BUTTONS
-========================================================= */
-
-document
-    .querySelectorAll(".angle")
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                document
-                    .querySelectorAll(".angle")
-                    .forEach(
-                        b => b.classList.remove(
-                            "active"
-                        )
-                    );
-
-                button.classList.add(
-                    "active"
-                );
-
-                state.angleMode =
-                    button.dataset.angle;
-
-                updateDisplay();
-            }
-        );
-    });
-
-
-/* =========================================================
-   KEYPAD
-========================================================= */
-
-document
-    .querySelectorAll(".key")
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                const value =
-                    button.dataset.value;
-
-                const action =
-                    button.dataset.action;
-
-
-                if (value !== undefined) {
-
-                    addValue(value);
-
-                    return;
-                }
-
-
-                if (action === "calculate") {
-                    calculate();
-                    return;
-                }
-
-
-                if (action === "clear") {
-                    clearCalculator();
-                    return;
-                }
-
-
-                if (action === "backspace") {
-                    backspace();
-                    return;
-                }
-
-
-                if (action === "ans") {
-                    insertAnswer();
-                    return;
-                }
-
-
-                if (
-                    action === "memory-clear" ||
-                    action === "memory-recall" ||
-                    action === "memory-add" ||
-                    action === "memory-subtract"
-                ) {
-
-                    memoryAction(action);
-                }
-
-            }
-        );
-
-    });
-
-
-/* =========================================================
-   SCIENTIFIC BUTTONS
-========================================================= */
-
-document
-    .querySelectorAll(".function-button")
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                const value =
-                    button.dataset.value;
-
-                addValue(value);
-            }
-        );
-
-    });
-
-
-/* =========================================================
-   SIDE PANELS
-========================================================= */
-
-function openPanel(panel) {
-
-    panel.classList.add("open");
-
-    panel.setAttribute(
-        "aria-hidden",
-        "false"
-    );
-}
-
-
-function closePanel(panel) {
-
-    panel.classList.remove("open");
-
-    panel.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-}
-
-
-document
-    .getElementById("helpButton")
-    .addEventListener(
-        "click",
-        () => openPanel(helpPanel)
-    );
-
-
-document
-    .getElementById("historyButton")
-    .addEventListener(
-        "click",
-        () => openPanel(historyPanel)
-    );
-
-
-document
-    .getElementById("tipHelp")
-    .addEventListener(
-        "click",
-        () => openPanel(helpPanel)
-    );
-
-
-document
-    .querySelectorAll("[data-close]")
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                const panel =
-                    document.getElementById(
-                        button.dataset.close
-                    );
-
-                closePanel(panel);
-            }
-        );
-    });
-
-
-/* =========================================================
+/* =====================================================
    HELP SEARCH
-========================================================= */
-
-const helpSearch =
-    document.getElementById(
-        "helpSearch"
-    );
-
-
-helpSearch.addEventListener(
-    "input",
-    () => {
-
-        const query =
-            helpSearch.value
-                .toLowerCase()
-                .trim();
-
-
-        document
-            .querySelectorAll(
-                ".help-section"
-            )
-            .forEach(section => {
-
-                const text =
-                    section.textContent
-                        .toLowerCase();
-
-                section.style.display =
-                    text.includes(query)
-                        ? ""
-                        : "none";
-            });
-    }
-);
-
-
-/* =========================================================
-   ADVANCED TOOLS
-========================================================= */
+===================================================== */
 
 document
-    .querySelectorAll(".tool-card")
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                openTool(
-                    button.dataset.tool
-                );
-            }
-        );
-    });
-
-
-function openTool(tool) {
-
-    toolModal.classList.add("open");
-
-    toolModal.setAttribute(
-        "aria-hidden",
-        "false"
-    );
-
-
-    const tools = {
-
-        equation: {
-            title: "Equation Solver",
-            description:
-                "This mode will let you solve linear and polynomial equations.",
-            example:
-                "Example: 2x + 5 = 15 → x = 5"
-        },
-
-        matrix: {
-            title: "Matrix Calculator",
-            description:
-                "Create matrices and perform addition, multiplication, determinant and inverse operations.",
-            example:
-                "Example: A × B"
-        },
-
-        statistics: {
-            title: "Statistics",
-            description:
-                "Enter a data set to calculate mean, median, variance and standard deviation.",
-            example:
-                "Example: 4, 7, 8, 10, 12"
-        },
-
-        conversion: {
-            title: "Conversions",
-            description:
-                "Convert between common mathematical and physical units.",
-            example:
-                "Example: 5 km → 5000 m"
-        }
-
-    };
-
-
-    const selected =
-        tools[tool];
-
-
-    modalContent.innerHTML = `
-        <div style="
-            color:#4f46e5;
-            font-size:32px;
-            font-weight:800;
-            margin-bottom:12px;
-        ">
-            ${selected.title}
-        </div>
-
-        <p style="
-            color:#697386;
-            font-size:13px;
-            line-height:1.7;
-        ">
-            ${selected.description}
-        </p>
-
-        <div style="
-            margin-top:18px;
-            padding:14px;
-            background:#f8fafc;
-            border-radius:12px;
-        ">
-
-            <strong style="
-                display:block;
-                font-size:11px;
-                color:#697386;
-                margin-bottom:6px;
-            ">
-                EXAMPLE
-            </strong>
-
-            <code style="
-                font-size:14px;
-            ">
-                ${selected.example}
-            </code>
-
-        </div>
-
-        <p style="
-            margin-top:18px;
-            color:#697386;
-            font-size:11px;
-        ">
-            This advanced module is ready to be connected
-            to the full mathematics engine.
-        </p>
-    `;
-}
-
-
-document
-    .getElementById("modalClose")
+    .getElementById("helpSearch")
     .addEventListener(
-        "click",
-        () => {
+        "input",
+        event => {
 
-            toolModal.classList.remove(
-                "open"
-            );
+            const query =
+                event.target.value
+                    .toLowerCase()
+                    .trim();
 
-            toolModal.setAttribute(
-                "aria-hidden",
-                "true"
-            );
+
+            document
+                .querySelectorAll(
+                    ".guide-card"
+                )
+                .forEach(card => {
+
+                    card.style.display =
+                        card.textContent
+                            .toLowerCase()
+                            .includes(query)
+                                ? ""
+                                : "none";
+                });
         }
     );
 
 
-toolModal.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target ===
-            toolModal
-        ) {
-
-            toolModal.classList.remove(
-                "open"
-            );
-        }
-    }
-);
-
-
-/* =========================================================
+/* =====================================================
    KEYBOARD
-========================================================= */
+===================================================== */
 
 document.addEventListener(
     "keydown",
     event => {
 
-        /*
-            Don't hijack typing into the Help search.
-        */
-
         if (
-            document.activeElement ===
-            helpSearch
+            document.activeElement.tagName ===
+            "INPUT" ||
+            document.activeElement.tagName ===
+            "SELECT"
         ) {
+
             return;
         }
 
@@ -1534,18 +2029,29 @@ document.addEventListener(
 
         if (key === "Escape") {
 
-            clearCalculator();
+            clear();
 
             return;
         }
-
     }
 );
 
 
-/* =========================================================
-   START
-========================================================= */
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+createMatrix(
+    matrixA,
+    2,
+    "A"
+);
+
+createMatrix(
+    matrixB,
+    2,
+    "B"
+);
 
 renderHistory();
 
