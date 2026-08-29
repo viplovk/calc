@@ -3,3 +3,21 @@
 .solver-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}.solver-tabs button{padding:10px;border:1px solid var(--border);background:var(--panel2);color:var(--text);border-radius:10px;cursor:pointer}.solver-tabs button.active{background:var(--accent);color:#fff;border-color:var(--accent)}.equation-preview{font-size:1.15rem;font-weight:700;text-align:center;padding:12px;border:1px solid var(--border);border-radius:12px;margin-bottom:14px}.coeff-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.coeff-grid label,.paste-label{display:flex;flex-direction:column;gap:6px;font-weight:700}.hint{color:var(--muted);font-size:.88rem;line-height:1.5}.paste-label{margin-top:10px}.paste-label input{margin-top:4px}@media(max-width:600px){.solver-tabs{grid-template-columns:repeat(2,1fr)}.coeff-grid{grid-template-columns:repeat(2,1fr)}}
 
 .matrix-mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:10px 0}.matrix-mode{min-height:38px;border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:9px}.matrix-mode.active{background:var(--accent);border-color:var(--accent);color:#fff}.toolbar label{display:flex;align-items:center;gap:6px}.toolbar input{width:58px;background:#080c12;color:#fff;border:1px solid var(--line);border-radius:7px;padding:7px}.matrix-card{overflow:auto}
+
+
+/* Support / donation */
+.support-icon{color:#b99cff!important}
+.support-modal{padding:4px 2px 8px}
+.support-hero{border:1px solid #8b72ff;border-radius:16px;padding:18px;text-align:center;background:linear-gradient(145deg,#121927,#0b1018);margin-bottom:12px}
+.support-cookie{font-size:27px}
+.support-hero h2{margin:5px 0 8px;font-size:22px;color:#b79cff}
+.support-hero p{max-width:520px;margin:0 auto;color:#c0c8d4;font-size:11px;line-height:1.7}
+.support-heart{font-size:24px;color:#9c82ff;margin-top:9px}
+.support-card{border:1px solid #303b4d;border-radius:15px;padding:16px;text-align:center;background:#101722}
+.support-card h3{margin:0;font-size:15px}
+.upi-qr{display:block;width:min(290px,80vw);aspect-ratio:1;object-fit:contain;background:#fff;border-radius:14px;margin:13px auto 10px;padding:8px}
+.upi-id{font-size:12px;color:#c4ccd8;margin:5px 0 12px}.upi-id strong{color:#b79cff}
+.support-note{border:1px dashed #8b72ff;border-radius:10px;padding:10px;color:#bac2ce;font-size:10px;line-height:1.7;margin-bottom:10px}.support-note strong{color:#b79cff;font-size:12px}
+.support-actions{display:grid;grid-template-columns:1fr 1fr}.support-actions button{min-height:42px}
+.creator-card{margin-top:12px;border:1px solid #293444;border-radius:14px;padding:14px;background:#0d141d;display:flex;flex-direction:column;gap:3px;text-align:center;color:#aeb7c5;font-size:10px}.creator-card strong{color:#b79cff;font-size:13px}.creator-heart{color:#a98aff;font-size:18px;margin-top:4px}
+@media(max-width:520px){.support-actions{grid-template-columns:1fr}.upi-qr{width:min(270px,78vw)}}

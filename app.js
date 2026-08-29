@@ -130,6 +130,51 @@ window.calcTool=()=>{try{const f=x=>Function('x','return '+$('#fx').value)(x),x=
 window.convert=()=>{try{let x=Number($('#cv').value),t=$('#ct').value,r={'km → mi':x*.621371,'mi → km':x/.621371,'°C → °F':x*9/5+32,'°F → °C':(x-32)*5/9,'kg → lb':x*2.2046226218,'lb → kg':x/2.2046226218,'rad → deg':x*180/Math.PI,'deg → rad':x*Math.PI/180}[t];$('#toolOut').textContent=fmt(r)}catch(e){$('#toolOut').textContent='Error: '+e.message}};
 window.base=()=>{try{let b=Number($('#bf').value),v=parseInt($('#bn').value,b);if(!Number.isFinite(v))throw Error('Invalid number for selected base');$('#toolOut').textContent=`BIN  ${v.toString(2)}\nOCT  ${v.toString(8)}\nDEC  ${v}\nHEX  ${v.toString(16).toUpperCase()}`}catch(e){$('#toolOut').textContent='Error: '+e.message}};
 window.comb=()=>{try{let n=Number($('#cn').value),r=Number($('#cr').value);$('#toolOut').textContent=`nCr = ${fmt(nCr(n,r))}\nnPr = ${fmt(nPr(n,r))}\nn!  = ${fmt(factorial(n))}`}catch(e){$('#toolOut').textContent='Error: '+e.message}};
+\nconst supportHTML = `
+  <button class="close-modal" id="closeSupport">×</button>
+  <div class="support-modal">
+    <div class="support-hero">
+      <div class="support-cookie">🍪</div>
+      <h2>Buy me a cookie :)</h2>
+      <p>If CALCX helps you in your studies or work, consider supporting me. Your support keeps me motivated to add more useful features!</p>
+      <div class="support-heart">♥</div>
+    </div>
+    <div class="support-card">
+      <h3>Scan & Pay with any UPI App</h3>
+      <p class="sub">Scan the QR code below to support</p>
+      <img class="upi-qr" src="assets/upi-qr.png" alt="UPI QR code for viplov7@upi">
+      <div class="upi-id">UPI ID: <strong>viplov7@upi</strong></div>
+      <div class="support-note">✨ Every little support means a lot.<br><strong>Thank you! 😊</strong></div>
+      <div class="actions support-actions">
+        <button class="primary" id="copyUpi">▣ &nbsp; Copy UPI ID</button>
+        <button id="openUpi">↗ &nbsp; Open in UPI App</button>
+      </div>
+    </div>
+    <div class="creator-card">
+      <strong>Made by Viplov</strong>
+      <span>Batch of 2025–29</span>
+      <span>IEC College of Engineering and Technology</span>
+      <span class="creator-heart">♥</span>
+    </div>
+  </div>`;
+
+function openSupport(){
+  $('#modal').innerHTML=supportHTML;
+  $('#modal').classList.remove('hidden');
+  $('#backdrop').classList.remove('hidden');
+  $('#closeSupport').onclick=closeModal;
+  $('#copyUpi').onclick=async()=>{
+    try{ await navigator.clipboard.writeText('viplov7@upi'); $('#copyUpi').textContent='✓ Copied'; setTimeout(()=>$('#copyUpi').textContent='▣  Copy UPI ID',1200); }
+    catch(e){ $('#copyUpi').textContent='viplov7@upi'; }
+  };
+  $('#openUpi').onclick=()=>{
+    const uri='upi://pay?pa=viplov7@upi&pn=Viplov&cu=INR';
+    window.location.href=uri;
+  };
+}
+
+$('#supportBtn').onclick=openSupport;
+
 const guides=[['01 · Basic calculations','Enter numbers and operators, then press =. The parser respects normal mathematical precedence.','25 × 4 + 10 = 110'],['02 · Scientific mode','Switch to Scientific for trigonometry, logarithms, powers and constants. Choose DEG, RAD or GRAD before trig calculations.','sin(30) = 0.5 in DEG'],['03 · Matrix mode','Choose a size, fill A and B, then select an operation. Determinant and inverse work for square matrices.','A × B · det(A) · A⁻¹ · Aᵀ'],['04 · Memory','MC clears memory. MR recalls it. M+ adds the displayed answer and M− subtracts it.','25 = → M+ → AC → MR'],['05 · Keyboard','Use numbers and operators directly. Enter calculates, Esc clears and Backspace deletes.','2*(3+4) ↵ = 14'],['06 · Tools','Equation Solver handles linear/quadratic equations, Statistics handles common descriptive measures, and Calculus uses numerical methods.','nCr(10,3) = 120']];function renderHelp(q=''){let x=guides.filter(g=>(g.join(' ')).toLowerCase().includes(q.toLowerCase()));$('#helpContent').innerHTML=x.map(g=>`<article class="guide"><h3>${g[0]}</h3><p>${g[1]}</p><div class="example">${g[2]}</div></article>`).join('')||'<p class="guide">No guide topics found.</p>'}$('#helpBtn').onclick=()=>{$('#drawer').classList.add('open');$('#backdrop').classList.remove('hidden');renderHelp()};$$('[data-close]').forEach(b=>b.onclick=()=>{$('#drawer').classList.remove('open');$('#backdrop').classList.add('hidden')});$('#helpSearch').oninput=e=>renderHelp(e.target.value);$('#historyBtn').onclick=()=>{let text=state.history.length?state.history.map((x,i)=>`${i+1}. ${x.e} = ${x.a}`).join('\n'):'No calculations yet.';$('#modal').innerHTML=`<button class="close-modal" onclick="closeModal()">×</button><h2>Calculation History</h2><p class="sub">Saved locally on this device.</p><div class="output">${text}</div><div class="actions"><button onclick="state.history=[];render();closeModal()">Clear history</button></div>`;$('#modal').classList.remove('hidden');$('#backdrop').classList.remove('hidden')};
 // The app is an ES module, so functions are not automatically visible to inline HTML onclick handlers.
 // Expose the tool actions explicitly so every tool button works reliably.
