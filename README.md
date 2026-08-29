@@ -12,7 +12,7 @@
 
 ## 👨‍💻 Creator
 
-* **Name:** Vishu Kashyap (Viplov)
+* **Name:** Viplov
 * **Institution:** [IEC College of Engineering & Technology](https://github.com/viplovk)
 * **Program:** B.Tech in Computer Science and Engineering (Core CSE)
 * **Batch:** 2025 – 2029 (2nd Year Student)
