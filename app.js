@@ -130,7 +130,8 @@ window.calcTool=()=>{try{const f=x=>Function('x','return '+$('#fx').value)(x),x=
 window.convert=()=>{try{let x=Number($('#cv').value),t=$('#ct').value,r={'km → mi':x*.621371,'mi → km':x/.621371,'°C → °F':x*9/5+32,'°F → °C':(x-32)*5/9,'kg → lb':x*2.2046226218,'lb → kg':x/2.2046226218,'rad → deg':x*180/Math.PI,'deg → rad':x*Math.PI/180}[t];$('#toolOut').textContent=fmt(r)}catch(e){$('#toolOut').textContent='Error: '+e.message}};
 window.base=()=>{try{let b=Number($('#bf').value),v=parseInt($('#bn').value,b);if(!Number.isFinite(v))throw Error('Invalid number for selected base');$('#toolOut').textContent=`BIN  ${v.toString(2)}\nOCT  ${v.toString(8)}\nDEC  ${v}\nHEX  ${v.toString(16).toUpperCase()}`}catch(e){$('#toolOut').textContent='Error: '+e.message}};
 window.comb=()=>{try{let n=Number($('#cn').value),r=Number($('#cr').value);$('#toolOut').textContent=`nCr = ${fmt(nCr(n,r))}\nnPr = ${fmt(nPr(n,r))}\nn!  = ${fmt(factorial(n))}`}catch(e){$('#toolOut').textContent='Error: '+e.message}};
-\nconst supportHTML = `
+
+const supportHTML = `
   <button class="close-modal" id="closeSupport">×</button>
   <div class="support-modal">
     <div class="support-hero">
